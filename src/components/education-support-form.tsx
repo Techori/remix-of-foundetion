@@ -117,7 +117,7 @@ export function EducationSupportForm({ lang, initialCode }: { lang: EduLang; ini
         <fieldset className="sm:col-span-2"><legend className="text-sm font-semibold text-edu-ink">{t("studentCategory")}<span className="text-edu-royal"> *</span></legend>
           <div className="mt-2 grid gap-3 sm:grid-cols-3">{(["school", "ug", "pg"] as const).map(c => { const Icon = c === "school" ? School : c === "ug" ? BookOpenCheck : GraduationCap; return <label key={c} className={`flex cursor-pointer items-center gap-3 rounded-xl border p-4 text-sm font-bold transition ${category === c ? "border-edu-royal bg-edu-sky text-edu-navy ring-2 ring-edu-royal/20" : "border-edu-navy/15 text-edu-ink hover:border-edu-royal/50"}`}>
             <input type="radio" name="studentCategory" id={c === "school" ? "edu-studentCategory" : undefined} value={c} checked={category === c} onChange={() => set("studentCategory", c)} className="sr-only" /><Icon className="h-5 w-5 text-edu-royal" aria-hidden="true" />{t(c)}</label>; })}</div>
-          {errors.studentCategory && <span className="mt-1 block text-xs font-semibold text-destructive">{errors.studentCategory}</span>}
+          {errors["studentCategory"] && <span className="mt-1 block text-xs font-semibold text-destructive">{errors["studentCategory"]}</span>}
         </fieldset>
         {category === "school" && <>
           {field("currentClass", { options: schoolClasses })}{field("schoolName")}{field("schoolType", { options: schoolTypes })}{field("schoolBoard", { options: schoolBoards })}
@@ -165,7 +165,7 @@ export function EducationSupportForm({ lang, initialCode }: { lang: EduLang; ini
           <span className="text-xs text-edu-ink/60">{lang === "en" ? "registration fee" : "पंजीकरण शुल्क"}</span>
           {a.maxAward && <span className="mt-3 text-xs text-edu-ink/75">{lang === "en" ? `Maximum potential award: ₹${a.maxAward.toLocaleString("en-IN")}` : `अधिकतम संभावित राशि: ₹${a.maxAward.toLocaleString("en-IN")}`}</span>}
         </label>; })}</div>
-        {errors.applicationType && <span className="mt-2 block text-xs font-semibold text-destructive">{errors.applicationType}</span>}
+        {errors["applicationType"] && <span className="mt-2 block text-xs font-semibold text-destructive">{errors["applicationType"]}</span>}
         <p className="mt-4 text-xs leading-relaxed text-edu-ink/70">{lang === "en" ? "Scholarship amounts are maximum potential awards, not guaranteed payments. Final eligibility and amounts depend on the selection criteria and the official decision." : "छात्रवृत्ति राशि अधिकतम संभावित राशि है, गारंटीशुदा भुगतान नहीं। अंतिम पात्रता और राशि चयन मानदंड और आधिकारिक निर्णय पर निर्भर है।"}</p>
       </fieldset>}
 
