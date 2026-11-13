@@ -151,4 +151,9 @@
 - [x] Education Support page with multi-step scholarship/sponsorship form, Razorpay payment links (₹149/₹249/₹599), acknowledgement number on submit, admin tab
 - [x] Remove Foundation section from footer
 - [x] Menu Foundation button links to the Education Support page
-- [ ] Bank details and KYC document uploads for Education Support: user chose later (only for shortlisted students)
+- [ ] Education Support: collect bank and KYC text details in the form, without document/image uploads; confirm required identity fields.
+- [ ] Change new acknowledgement numbers to six date digits + two state digits + two district digits + five student sequence digits (00001–99999); confirm code mapping and sequence scope.
+- [ ] Add acknowledgement PDF QR code and complete Excel export.
+- [ ] Send automatic student confirmation and acknowledgement through the user's Zoho mailbox; waiting for sender identity and a secure Zoho connection. Confirm whether SMS is also required.
+- [ ] Require confirmed payment before admin approval; enhance registration review.
+- [ ] Add BDE/BDM accounts and scoped access; waiting for permissions and account/profile details. Provision admin securely without sharing passwords in chat.
