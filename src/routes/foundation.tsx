@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, BookOpen, ClipboardCheck, FileText, Gavel, Handshake, HeartHandshake, HandHeart, Languages, Mail, Search, Users } from "lucide-react";
+import { ArrowRight, BookOpen, ClipboardCheck, FileText, Gavel, Handshake, HandHeart, Languages, Mail, Search, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { BasicContactFields, FoundationFormDialog, FoundationSent, useFoundationSubmit } from "@/components/foundation-form";
@@ -14,6 +14,7 @@ import healthImage from "@/assets/foundation/healthcare.webp";
 import reliefImage from "@/assets/foundation/humanitarian.webp";
 import environmentImage from "@/assets/foundation/environment.webp";
 import studentsImage from "@/assets/foundation/students-learning.webp";
+import riloydLogo from "@/assets/local/riloyd-logo.png.optimized.nav.webp";
 
 const TITLE = "RILOYD Foundation | Education, Animal Welfare, Healthcare & Relief";
 const DESCRIPTION = "RILOYD Foundation supports scholarships, school fees, animal welfare, healthcare, food relief and tree plantation. Apply for help, volunteer, partner or pledge a donation.";
@@ -52,29 +53,21 @@ function FoundationPage() {
     localStorage.setItem("riloyd-foundation-lang", next);
   }
   const t = foundationCopy[lang];
-  const navLinks: [string, string][] = [["about", t.nav.about], ["programmes", t.nav.programmes], ["students", t.nav.students], ["how-we-help", t.nav.help], ["impact", t.nav.impact], ["get-involved", t.nav.involved], ["contact", t.nav.contact]];
 
   return <main lang={lang} className="foundation-page bg-foundation-paper text-foundation-ink">
-    <div className="foundation-subnav sticky top-0 z-20 border-b border-foundation-green/15 bg-foundation-paper/95 backdrop-blur">
-      <div className="mx-auto flex max-w-[1280px] items-center gap-3 px-4 py-2.5 sm:px-6 lg:px-10">
-        <a href="#top" className="flex shrink-0 items-center gap-2 text-sm font-black text-foundation-green"><HeartHandshake className="h-5 w-5 text-foundation-maroon" aria-hidden="true" /><span>RILOYD <span className="text-foundation-maroon">Foundation</span></span></a>
-        <nav aria-label="Foundation sections" className="no-scrollbar flex min-w-0 flex-1 gap-4 overflow-x-auto whitespace-nowrap px-2 text-xs font-bold text-foundation-ink/75 lg:justify-center lg:gap-6">
-          {navLinks.map(([id, label]) => <a key={id} href={`#${id}`} className="py-1 hover:text-foundation-green">{label}</a>)}
-        </nav>
-        <Button type="button" variant="outline" size="sm" onClick={toggleLang} aria-label={t.langLabel} className="h-8 shrink-0 rounded-full border-foundation-green/30 bg-transparent px-3 text-xs font-bold text-foundation-green hover:bg-foundation-sage hover:text-foundation-green"><Languages className="h-3.5 w-3.5" aria-hidden="true" />{t.langToggle}</Button>
-        <Button type="button" size="sm" onClick={() => setDialog("donation_pledge")} className="hidden h-8 shrink-0 rounded-full bg-foundation-maroon px-4 text-xs font-bold text-foundation-paper hover:bg-foundation-maroon/90 sm:inline-flex">{t.donate}</Button>
-      </div>
-    </div>
-
     <section id="top" className="relative isolate overflow-hidden bg-foundation-green text-foundation-paper">
       <picture>
         <source media="(max-width: 767px)" srcSet={heroImageSmall} />
         <img src={heroImage} alt="" width={1600} height={907} fetchPriority="high" decoding="async" className="absolute inset-0 -z-10 h-full w-full object-cover object-[60%_center]" />
       </picture>
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-foundation-green via-foundation-green/85 to-foundation-green/20 max-md:bg-gradient-to-t max-md:from-foundation-green max-md:via-foundation-green/85 max-md:to-foundation-green/30" aria-hidden="true" />
-      <div className="mx-auto max-w-[1280px] px-4 pb-14 pt-40 sm:px-6 md:py-28 lg:px-10 lg:py-36">
+      <div className="mx-auto max-w-[1280px] px-4 pb-14 pt-24 sm:px-6 md:py-28 lg:px-10 lg:py-36">
         <div className="max-w-xl">
-          <Kicker light>{t.hero.kicker}</Kicker>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <img src={riloydLogo} alt="RILOYD" width={480} height={240} decoding="async" className="h-16 w-auto sm:h-20" />
+            <Button type="button" variant="outline" size="sm" onClick={toggleLang} aria-label={t.langLabel} className="h-8 rounded-full border-foundation-paper/50 bg-transparent px-3 text-xs font-bold text-foundation-paper hover:bg-foundation-paper/10 hover:text-foundation-paper"><Languages className="h-3.5 w-3.5" aria-hidden="true" />{t.langToggle}</Button>
+          </div>
+          <div className="mt-6"><Kicker light>{t.hero.kicker}</Kicker></div>
           <h1 className="mt-4 text-[clamp(2.1rem,5vw,3.8rem)] font-black leading-[1.05]">{t.hero.title}</h1>
           <p className="mt-5 text-base leading-relaxed text-foundation-paper/90 sm:text-lg">{t.hero.text}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -86,7 +79,7 @@ function FoundationPage() {
       </div>
     </section>
 
-    <section id="about" className="scroll-mt-14">
+    <section id="about" className="scroll-mt-4">
       <div className="mx-auto grid max-w-[1280px] gap-10 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1.2fr_.8fr] lg:px-10">
         <div>
           <Kicker>{t.about.kicker}</Kicker>
@@ -104,14 +97,14 @@ function FoundationPage() {
       </div>
     </section>
 
-    <section id="programmes" className="scroll-mt-14 bg-foundation-sage/70">
+    <section id="programmes" className="scroll-mt-4 bg-foundation-sage/70">
       <div className="mx-auto max-w-[1280px] px-4 py-16 sm:px-6 md:py-24 lg:px-10">
         <Kicker>{t.programmes.kicker}</Kicker>
         <h2 className="mt-3 text-[clamp(1.8rem,3.4vw,2.8rem)] font-black leading-tight text-foundation-green">{t.programmes.title}</h2>
         <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {foundationPrograms.map(program => {
             const copy = t.programs[program.id]!;
-            return <article key={program.id} id={program.id} className="flex scroll-mt-16 flex-col overflow-hidden rounded-2xl border border-foundation-green/10 bg-foundation-paper shadow-sm">
+            return <article key={program.id} id={program.id} className="flex scroll-mt-4 flex-col overflow-hidden rounded-2xl border border-foundation-green/10 bg-foundation-paper shadow-sm">
               <img src={programImages[program.id]} alt="" width={800} height={608} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover" />
               <div className="flex flex-1 flex-col p-6">
                 <h3 className="text-xl font-black text-foundation-green">{copy.title}</h3>
@@ -125,7 +118,7 @@ function FoundationPage() {
       </div>
     </section>
 
-    <section id="students" className="scroll-mt-14">
+    <section id="students" className="scroll-mt-4">
       <div className="mx-auto grid max-w-[1280px] items-center gap-10 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-2 lg:px-10">
         <img src={studentsImage} alt="" width={1280} height={806} loading="lazy" decoding="async" className="aspect-[16/10] w-full rounded-3xl object-cover" />
         <div>
@@ -140,7 +133,7 @@ function FoundationPage() {
       </div>
     </section>
 
-    <section id="how-we-help" className="scroll-mt-14 bg-foundation-green text-foundation-paper">
+    <section id="how-we-help" className="scroll-mt-4 bg-foundation-green text-foundation-paper">
       <div className="mx-auto max-w-[1280px] px-4 py-16 sm:px-6 md:py-24 lg:px-10">
         <Kicker light>{t.help.kicker}</Kicker>
         <h2 className="mt-3 text-[clamp(1.8rem,3.4vw,2.8rem)] font-black leading-tight">{t.help.title}</h2>
@@ -154,7 +147,7 @@ function FoundationPage() {
       </div>
     </section>
 
-    <section id="impact" className="scroll-mt-14">
+    <section id="impact" className="scroll-mt-4">
       <div className="mx-auto max-w-[1280px] px-4 py-16 text-center sm:px-6 md:py-24 lg:px-10">
         <Kicker>{t.impact.kicker}</Kicker>
         <h2 className="mt-3 text-[clamp(1.8rem,3.4vw,2.8rem)] font-black leading-tight text-foundation-green">{t.impact.title}</h2>
@@ -168,12 +161,12 @@ function FoundationPage() {
       </div>
     </section>
 
-    <section id="get-involved" className="scroll-mt-14 bg-foundation-sage/70">
+    <section id="get-involved" className="scroll-mt-4 bg-foundation-sage/70">
       <div className="mx-auto max-w-[1280px] px-4 py-16 sm:px-6 md:py-24 lg:px-10">
         <Kicker>{t.involved.kicker}</Kicker>
         <h2 className="mt-3 text-[clamp(1.8rem,3.4vw,2.8rem)] font-black leading-tight text-foundation-green">{t.involved.title}</h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {t.involved.cards.map(card => { const Icon = involvedIcons[card.kind]; const donate = card.kind === "donation_pledge"; return <div key={card.kind} id={donate ? "donate" : undefined} className={`flex scroll-mt-16 flex-col rounded-2xl p-7 ${donate ? "bg-foundation-maroon text-foundation-paper" : "border border-foundation-green/15 bg-foundation-paper"}`}>
+          {t.involved.cards.map(card => { const Icon = involvedIcons[card.kind]; const donate = card.kind === "donation_pledge"; return <div key={card.kind} id={donate ? "donate" : undefined} className={`flex scroll-mt-4 flex-col rounded-2xl p-7 ${donate ? "bg-foundation-maroon text-foundation-paper" : "border border-foundation-green/15 bg-foundation-paper"}`}>
             <Icon className={`h-8 w-8 ${donate ? "text-foundation-gold" : "text-foundation-maroon"}`} aria-hidden="true" />
             <h3 className={`mt-4 text-xl font-black ${donate ? "" : "text-foundation-green"}`}>{card.title}</h3>
             <p className={`mt-2 flex-1 text-sm leading-relaxed ${donate ? "text-foundation-paper/85" : "text-foundation-ink/75"}`}>{card.text}</p>
@@ -203,7 +196,7 @@ function FoundationPage() {
 function ContactSection({ lang }: { lang: FoundationLang }) {
   const t = foundationCopy[lang].contact;
   const { state, onSubmit } = useFoundationSubmit("contact", []);
-  return <section id="contact" className="scroll-mt-14">
+  return <section id="contact" className="scroll-mt-4">
     <div className="mx-auto grid max-w-[1280px] gap-10 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[.8fr_1.2fr] lg:px-10">
       <div>
         <Kicker>{t.kicker}</Kicker>
