@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, BookOpen, ClipboardCheck, FileText, Gavel, Handshake, HandHeart, Languages, Mail, Search, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -110,7 +110,9 @@ function FoundationPage() {
                 <h3 className="text-xl font-black text-foundation-green">{copy.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-foundation-ink/75">{copy.description}</p>
                 <ul className="mt-4 flex flex-wrap gap-2">{copy.items.map(item => <li key={item} className="rounded-full bg-foundation-sage px-3 py-1 text-xs font-semibold text-foundation-green">{item}</li>)}</ul>
-                <div className="mt-auto pt-6"><Button type="button" onClick={() => setDialog(program.kind as DialogKind)} variant="outline" className="h-10 w-full rounded-full border-foundation-maroon/40 bg-transparent text-sm font-bold text-foundation-maroon hover:bg-foundation-maroon hover:text-foundation-paper">{copy.cta} <ArrowRight className="h-4 w-4" /></Button></div>
+                <div className="mt-auto pt-6">{program.id === "education"
+                  ? <Button asChild variant="outline" className="h-10 w-full rounded-full border-foundation-maroon/40 bg-transparent text-sm font-bold text-foundation-maroon hover:bg-foundation-maroon hover:text-foundation-paper"><Link to="/education-support">{copy.cta} <ArrowRight className="h-4 w-4" /></Link></Button>
+                  : <Button type="button" onClick={() => setDialog(program.kind as DialogKind)} variant="outline" className="h-10 w-full rounded-full border-foundation-maroon/40 bg-transparent text-sm font-bold text-foundation-maroon hover:bg-foundation-maroon hover:text-foundation-paper">{copy.cta} <ArrowRight className="h-4 w-4" /></Button>}</div>
               </div>
             </article>;
           })}
@@ -126,7 +128,7 @@ function FoundationPage() {
           <h2 className="mt-3 text-[clamp(1.8rem,3.4vw,2.8rem)] font-black leading-tight text-foundation-green">{t.students.title}</h2>
           <p className="mt-5 text-base leading-relaxed text-foundation-ink/80">{t.students.text}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button type="button" onClick={() => setDialog("scholarship")} className="h-12 rounded-full bg-foundation-green px-6 text-sm font-extrabold text-foundation-paper hover:bg-foundation-green/90"><BookOpen className="h-4 w-4" />{t.students.scholarship}</Button>
+            <Button asChild className="h-12 rounded-full bg-foundation-green px-6 text-sm font-extrabold text-foundation-paper hover:bg-foundation-green/90"><Link to="/education-support"><BookOpen className="h-4 w-4" />{t.students.scholarship}</Link></Button>
             <Button type="button" variant="outline" onClick={() => setDialog("school_fee")} className="h-12 rounded-full border-foundation-green/40 bg-transparent px-6 text-sm font-extrabold text-foundation-green hover:bg-foundation-sage hover:text-foundation-green">{t.students.schoolFee}</Button>
           </div>
         </div>
