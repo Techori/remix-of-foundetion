@@ -9,7 +9,7 @@ import { eduSteps, lbl, type EduLang } from "@/lib/education-support/labels";
 
 type Values = Record<string, string | boolean>;
 const DRAFT_KEY = "riloyd-education-support-draft";
-const boolFields = ["guardianConsent", "withoutCoordinator", "confirmAccurate", "agreeTerms", "consentVerification", "authorizeContact", "understandFees"];
+const boolFields = ["guardianConsent", "withoutCoordinator", "confirmAccurate", "agreeTerms", "consentVerification", "authorizeContact", "understandFees", "kycConsent"];
 const emptyValues = (): Values => {
   const v: Values = { nationality: "Indian" };
   for (const step of stepFields) for (const f of step) v[f] = boolFields.includes(f) ? false : (v[f] ?? "");
@@ -42,16 +42,16 @@ export function EducationSupportForm({ lang, initialCode }: { lang: EduLang; ini
     if (initialCode) setValues(v => ({ ...v, coordinatorCode: initialCode.toUpperCase().slice(0, 40) }));
     setLoaded(true);
   }, [initialCode]);
-  useEffect(() => { if (loaded && !result) localStorage.setItem(DRAFT_KEY, JSON.stringify({ values, step })); }, [values, step, loaded, result]);
+  useEffect(() => { if (loaded && !result) { const safeValues = { ...values }; for (const k of ['bankHolder','bankName','bankAccount','bankAccountConfirm','bankIfsc','aadhaarNumber','kycConsent']) delete safeValues[k]; localStorage.setItem(DRAFT_KEY, JSON.stringify({ values: safeValues, step })); } }, [values, step, loaded, result]);
 
   const dob = String(values["dateOfBirth"] ?? "");
   const minor = /^\d{4}-\d{2}-\d{2}$/.test(dob) && isMinor(dob);
   const steps = useMemo(() => [
-    { key: "education", fields: stepFields[0]! }, { key: "personal", fields: stepFields[1]! },
-    ...(minor ? [{ key: "guardian", fields: stepFields[2]! }] : []),
-    { key: "coordinator", fields: stepFields[3]! }, { key: "apply", fields: stepFields[4]! }, { key: "declaration", fields: stepFields[5]! }, { key: "review", fields: [] as string[] },
+    { key: "education", fields: stepFields[0] ?? [] }, { key: "personal", fields: stepFields[1] ?? [] },
+    ...(minor ? [{ key: "guardian", fields: stepFields[2] ?? [] }] : []),
+    { key: "coordinator", fields: stepFields[3] ?? [] }, { key: "apply", fields: stepFields[4] ?? [] }, { key: 'bank', fields: stepFields[6] ?? [] }, { key: "declaration", fields: stepFields[5] ?? [] }, { key: "review", fields: [] as string[] },
   ], [minor]);
-  const current = steps[Math.min(step, steps.length - 1)]!;
+  const current = steps[Math.min(step, steps.length - 1)] ?? { key: 'education', fields: stepFields[0] ?? [] };
 
   const set = (name: string, value: string | boolean) => { setValues(v => ({ ...v, [name]: value })); setErrors(e => { const { [name]: _, ...rest } = e; return rest; }); };
   const goTo = (n: number) => { setStep(n); document.getElementById("registration-form")?.scrollIntoView({ behavior: "smooth", block: "start" }); };
@@ -107,10 +107,10 @@ export function EducationSupportForm({ lang, initialCode }: { lang: EduLang; ini
 
   return <div id="registration-form" className="scroll-mt-6 rounded-3xl border border-edu-navy/10 bg-edu-paper p-4 shadow-[0_20px_60px_-30px_rgba(11,31,75,0.35)] sm:p-8">
     <ol className="flex gap-1.5" aria-label="Registration progress">
-      {steps.map((s, i) => <li key={s.key} className={`h-1.5 flex-1 rounded-full ${i <= step ? "bg-edu-royal" : "bg-edu-navy/10"}`} aria-current={i === step ? "step" : undefined}><span className="sr-only">{eduSteps[s.key]![lang === "en" ? 0 : 1]}</span></li>)}
+      {steps.map((s, i) => <li key={s.key} className={`h-1.5 flex-1 rounded-full ${i <= step ? "bg-edu-royal" : "bg-edu-navy/10"}`} aria-current={i === step ? "step" : undefined}><span className="sr-only">{eduSteps[s.key]?.[lang === "en" ? 0 : 1]}</span></li>)}
     </ol>
     <p className="mt-4 text-xs font-bold uppercase tracking-wider text-edu-royal [&:lang(hi)]:tracking-normal">{lang === "en" ? `Step ${step + 1} of ${steps.length}` : `चरण ${step + 1} / ${steps.length}`}</p>
-    <h3 className="mt-1 text-2xl font-black text-edu-navy">{eduSteps[current.key]![lang === "en" ? 0 : 1]}</h3>
+    <h3 className="mt-1 text-2xl font-black text-edu-navy">{eduSteps[current.key]?.[lang === "en" ? 0 : 1]}</h3>
 
     <div className="mt-6 grid gap-4 sm:grid-cols-2">
       {current.key === "education" && <>
@@ -169,6 +169,10 @@ export function EducationSupportForm({ lang, initialCode }: { lang: EduLang; ini
         <p className="mt-4 text-xs leading-relaxed text-edu-ink/70">{lang === "en" ? "Scholarship amounts are maximum potential awards, not guaranteed payments. Final eligibility and amounts depend on the selection criteria and the official decision." : "छात्रवृत्ति राशि अधिकतम संभावित राशि है, गारंटीशुदा भुगतान नहीं। अंतिम पात्रता और राशि चयन मानदंड और आधिकारिक निर्णय पर निर्भर है।"}</p>
       </fieldset>}
 
+      {current.key === 'bank' && <>
+        <p className="text-sm text-edu-ink sm:col-span-2">{lang === 'en' ? 'Enter bank and Aadhaar details as text. No document uploads. These details are encrypted and available only to authorised administrators; they are not saved in your device draft or printed on the acknowledgement.' : 'बैंक और आधार जानकारी लिखकर भरें। दस्तावेज़ अपलोड नहीं करें। यह जानकारी एन्क्रिप्टेड है और केवल अधिकृत एडमिन देख सकते हैं; डिवाइस ड्राफ्ट या पावती में नहीं रखी जाती।'}</p>
+        {field('bankHolder')}{field('bankName')}{field('bankAccount', { inputMode: 'numeric', type: 'password' })}{field('bankAccountConfirm', { inputMode: 'numeric', type: 'password' })}{field('bankIfsc')}{field('aadhaarNumber', { inputMode: 'numeric', type: 'password' })}{check('kycConsent')}
+      </>}
       {current.key === "declaration" && <>{["confirmAccurate", "agreeTerms", "consentVerification", "authorizeContact", "understandFees"].map(k => check(k))}</>}
 
       {current.key === "review" && <div className="space-y-3 text-sm sm:col-span-2">
@@ -216,7 +220,7 @@ function RegistrationDone({ lang, result, values, onNew }: { lang: EduLang; resu
     <CheckCircle2 className="h-12 w-12 text-edu-royal" aria-hidden="true" />
     <h3 className="mt-3 text-2xl font-black text-edu-navy">{lang === "en" ? "Registration submitted" : "पंजीकरण जमा हो गया"}</h3>
     <p className="mt-2 text-sm text-edu-ink/75">{lang === "en" ? "Your acknowledgement number:" : "आपकी पावती संख्या:"}</p>
-    <p className="mt-1 select-all text-3xl font-black tracking-wide text-edu-royal">{result.ackNumber}</p>
+    <p className="mt-1 select-all break-all text-2xl font-black text-edu-royal sm:text-3xl">{result.ackNumber}</p>
     <p className="mt-2 text-xs text-edu-ink/60">{lang === "en" ? "Save this number for all communication." : "सभी संपर्क के लिए यह संख्या सुरक्षित रखें।"}</p>
 
     <div className="mt-6 rounded-2xl bg-edu-navy p-5 text-edu-paper">
