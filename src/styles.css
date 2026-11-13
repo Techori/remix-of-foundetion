@@ -655,3 +655,21 @@
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
 }
+
+/* The employee workspace has a restrained palette, independent of public festival decoration. */
+.crm-workspace, [role="dialog"]:has(form [name="ownerId"]), [role="dialog"]:has(input[name="employeeCode"]) {
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.24 0.01 260);
+  --surface: oklch(0.965 0.005 260);
+  --muted-foreground: oklch(0.49 0.01 260);
+  --border: oklch(0.88 0.005 260);
+  --input: var(--border);
+  --primary: oklch(0.53 0.2 25);
+  --primary-foreground: oklch(1 0 0);
+  --accent: oklch(0.94 0.005 260);
+  --accent-foreground: var(--foreground);
+  letter-spacing: 0;
+}
+.crm-workspace section { background-image: none !important; }
+.crm-progress { accent-color: var(--crm-success); }
+.crm-workspace input, .crm-workspace select { max-width: 100%; }
