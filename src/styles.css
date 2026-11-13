@@ -75,9 +75,11 @@
   --color-edu-sky: var(--edu-sky);
   --color-edu-paper: var(--edu-paper);
   --color-edu-ink: var(--edu-ink);
+  --color-crm-success: var(--crm-success);
 }
 
 :root {
+  --crm-success: oklch(0.52 0.13 160);
   --radius: 0.375rem;
   /* RILOYD Foundation brand palette: fixed across site themes. */
   --foundation-green: #123d30;

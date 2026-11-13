@@ -5,6 +5,7 @@ import {
   createRootRouteWithContext,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { type ReactNode } from "react";
 
@@ -103,14 +104,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const workspace = useRouterState({ select: state => state.location.pathname === '/crm' });
 
   return (
     <QueryClientProvider client={queryClient}>
       <CountryLogosProvider>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <SiteHeader />
+      {!workspace && <SiteHeader />}
       <Outlet />
-      <SiteFooter />
+      {!workspace && <SiteFooter />}
       </CountryLogosProvider>
     </QueryClientProvider>
   );

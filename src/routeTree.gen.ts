@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CrmRouteImport } from './routes/crm'
 import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as EducationSupportRouteImport } from './routes/education-support'
 import { Route as FoundationRouteImport } from './routes/foundation'
@@ -64,6 +65,11 @@ const AdminRoute = AdminRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DownloadsRoute = DownloadsRouteImport.update({
@@ -235,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
+  '/crm': typeof CrmRoute
   '/downloads': typeof DownloadsRoute
   '/education-support': typeof EducationSupportRoute
   '/foundation': typeof FoundationRoute
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
+  '/crm': typeof CrmRoute
   '/downloads': typeof DownloadsRoute
   '/education-support': typeof EducationSupportRoute
   '/foundation': typeof FoundationRoute
@@ -312,6 +320,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
+  '/crm': typeof CrmRoute
   '/downloads': typeof DownloadsRoute
   '/education-support': typeof EducationSupportRoute
   '/foundation': typeof FoundationRoute
@@ -352,6 +361,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
+    | '/crm'
     | '/downloads'
     | '/education-support'
     | '/foundation'
@@ -390,6 +400,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
+    | '/crm'
     | '/downloads'
     | '/education-support'
     | '/foundation'
@@ -428,6 +439,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
+    | '/crm'
     | '/downloads'
     | '/education-support'
     | '/foundation'
@@ -467,6 +479,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
   ContactRoute: typeof ContactRoute
+  CrmRoute: typeof CrmRoute
   DownloadsRoute: typeof DownloadsRoute
   EducationSupportRoute: typeof EducationSupportRoute
   FoundationRoute: typeof FoundationRoute
@@ -529,6 +542,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/downloads': {
@@ -763,6 +783,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   ContactRoute: ContactRoute,
+  CrmRoute: CrmRoute,
   DownloadsRoute: DownloadsRoute,
   EducationSupportRoute: EducationSupportRoute,
   FoundationRoute: FoundationRoute,
