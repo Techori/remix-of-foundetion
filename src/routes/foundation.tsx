@@ -117,7 +117,7 @@ function FoundationPage() {
                 <h3 className="text-xl font-black text-foundation-green">{copy.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-foundation-ink/75">{copy.description}</p>
                 <ul className="mt-4 flex flex-wrap gap-2">{copy.items.map(item => <li key={item} className="rounded-full bg-foundation-sage px-3 py-1 text-xs font-semibold text-foundation-green">{item}</li>)}</ul>
-                <Button type="button" onClick={() => setDialog(program.kind as DialogKind)} variant="outline" className="mt-auto h-10 w-full rounded-full border-foundation-maroon/40 bg-transparent text-sm font-bold text-foundation-maroon hover:bg-foundation-maroon hover:text-foundation-paper [&]:mt-6">{copy.cta} <ArrowRight className="h-4 w-4" /></Button>
+                <div className="mt-auto pt-6"><Button type="button" onClick={() => setDialog(program.kind as DialogKind)} variant="outline" className="h-10 w-full rounded-full border-foundation-maroon/40 bg-transparent text-sm font-bold text-foundation-maroon hover:bg-foundation-maroon hover:text-foundation-paper">{copy.cta} <ArrowRight className="h-4 w-4" /></Button></div>
               </div>
             </article>;
           })}

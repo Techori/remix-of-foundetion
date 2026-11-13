@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DownloadsRouteImport } from './routes/downloads'
+import { Route as FoundationRouteImport } from './routes/foundation'
 import { Route as FundingProgrammeRouteImport } from './routes/funding-programme'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as PrototypeFundingRouteImport } from './routes/prototype-funding'
@@ -66,6 +67,11 @@ const ContactRoute = ContactRouteImport.update({
 const DownloadsRoute = DownloadsRouteImport.update({
   id: '/downloads',
   path: '/downloads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FoundationRoute = FoundationRouteImport.update({
+  id: '/foundation',
+  path: '/foundation',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FundingProgrammeRoute = FundingProgrammeRouteImport.update({
@@ -218,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/foundation': typeof FoundationRoute
   '/funding-programme': typeof FundingProgrammeRoute
   '/payment': typeof PaymentRoute
   '/prototype-funding': typeof PrototypeFundingRoute
@@ -253,6 +260,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/foundation': typeof FoundationRoute
   '/funding-programme': typeof FundingProgrammeRoute
   '/payment': typeof PaymentRoute
   '/prototype-funding': typeof PrototypeFundingRoute
@@ -289,6 +297,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/foundation': typeof FoundationRoute
   '/funding-programme': typeof FundingProgrammeRoute
   '/payment': typeof PaymentRoute
   '/prototype-funding': typeof PrototypeFundingRoute
@@ -326,6 +335,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/downloads'
+    | '/foundation'
     | '/funding-programme'
     | '/payment'
     | '/prototype-funding'
@@ -361,6 +371,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/downloads'
+    | '/foundation'
     | '/funding-programme'
     | '/payment'
     | '/prototype-funding'
@@ -396,6 +407,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/downloads'
+    | '/foundation'
     | '/funding-programme'
     | '/payment'
     | '/prototype-funding'
@@ -432,6 +444,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ContactRoute: typeof ContactRoute
   DownloadsRoute: typeof DownloadsRoute
+  FoundationRoute: typeof FoundationRoute
   FundingProgrammeRoute: typeof FundingProgrammeRoute
   PaymentRoute: typeof PaymentRoute
   PrototypeFundingRoute: typeof PrototypeFundingRoute
@@ -497,6 +510,13 @@ declare module '@tanstack/react-router' {
       path: '/downloads'
       fullPath: '/downloads'
       preLoaderRoute: typeof DownloadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/foundation': {
+      id: '/foundation'
+      path: '/foundation'
+      fullPath: '/foundation'
+      preLoaderRoute: typeof FoundationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/funding-programme': {
@@ -704,6 +724,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ContactRoute: ContactRoute,
   DownloadsRoute: DownloadsRoute,
+  FoundationRoute: FoundationRoute,
   FundingProgrammeRoute: FundingProgrammeRoute,
   PaymentRoute: PaymentRoute,
   PrototypeFundingRoute: PrototypeFundingRoute,

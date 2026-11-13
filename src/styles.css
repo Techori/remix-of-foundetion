@@ -637,3 +637,8 @@
 }
 /* Festive covers the regular photos with festival pictures, so skip loading the hidden ones. */
 .chhath .base-art { display: none; }
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
