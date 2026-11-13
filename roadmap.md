@@ -145,3 +145,10 @@
 
 - [x] Menu and footer Foundation links point to /foundation; admin "Foundation forms" tab added (signed-in check pending: remix has no account yet)
 - [x] Payments: gateway removed entirely instead
+
+## Education Support (13 Nov 2026)
+- [x] Foundation page: remove separate section menu, use RILOYD logo
+- [x] Education Support page with multi-step scholarship/sponsorship form, Razorpay payment links (₹149/₹249/₹599), acknowledgement number on submit, admin tab
+- [x] Remove Foundation section from footer
+- [x] Menu Foundation button links to the Education Support page
+- [ ] Bank details and KYC document uploads for Education Support: user chose later (only for shortlisted students)
