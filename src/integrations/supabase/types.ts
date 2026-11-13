@@ -184,10 +184,62 @@ export type Database = {
         }
         Relationships: []
       }
+      education_district_codes: {
+        Row: {
+          code: number
+          district_key: string
+          district_name: string
+          state_code: string
+        }
+        Insert: {
+          code: number
+          district_key: string
+          district_name: string
+          state_code: string
+        }
+        Update: {
+          code?: number
+          district_key?: string
+          district_name?: string
+          state_code?: string
+        }
+        Relationships: []
+      }
+      education_staff_access: {
+        Row: {
+          active: boolean
+          created_at: string
+          designation: string
+          manager_id: string | null
+          referral_code: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          designation: string
+          manager_id?: string | null
+          referral_code: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          designation?: string
+          manager_id?: string | null
+          referral_code?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       education_support_registrations: {
         Row: {
+          aadhaar_last_four: string | null
           ack_number: string
           application_type: string
+          approval_status: string
+          approved_at: string | null
+          approved_by: string | null
           city: string
           coordinator: Json
           coordinator_code: string | null
@@ -220,6 +272,7 @@ export type Database = {
           payment_status: string
           permanent_address: string
           pin_code: string
+          private_details_ciphertext: string | null
           receipt_token_hash: string
           registration_fee: number
           state: string
@@ -232,8 +285,12 @@ export type Database = {
           without_coordinator: boolean
         }
         Insert: {
+          aadhaar_last_four?: string | null
           ack_number?: string
           application_type: string
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
           city: string
           coordinator?: Json
           coordinator_code?: string | null
@@ -266,6 +323,7 @@ export type Database = {
           payment_status?: string
           permanent_address: string
           pin_code: string
+          private_details_ciphertext?: string | null
           receipt_token_hash: string
           registration_fee: number
           state: string
@@ -278,8 +336,12 @@ export type Database = {
           without_coordinator?: boolean
         }
         Update: {
+          aadhaar_last_four?: string | null
           ack_number?: string
           application_type?: string
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
           city?: string
           coordinator?: Json
           coordinator_code?: string | null
@@ -312,6 +374,7 @@ export type Database = {
           payment_status?: string
           permanent_address?: string
           pin_code?: string
+          private_details_ciphertext?: string | null
           receipt_token_hash?: string
           registration_fee?: number
           state?: string
