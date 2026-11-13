@@ -14,3 +14,19 @@ describe("RILOYD Foundation rules", () => {
   it("rejects an invalid mobile number", () => expect(foundationSubmissionSchema.safeParse({ ...base, phone: "12", kind: "volunteer" }).success).toBe(false));
   it("rejects unknown form types", () => expect(foundationSubmissionSchema.safeParse({ ...base, kind: "payment" }).success).toBe(false));
 });
+
+import { foundationCopy } from "./foundation-copy";
+
+describe("RILOYD Foundation page languages", () => {
+  it("has English and Hindi copy for every programme", () => {
+    for (const lang of ["en", "hi"] as const) for (const p of foundationPrograms) expect(foundationCopy[lang].programs[p.id]?.title).toBeTruthy();
+  });
+  it("shows all four help steps and impact labels in both languages", () => {
+    expect(foundationCopy.hi.steps).toHaveLength(4);
+    expect(foundationCopy.en.steps).toHaveLength(4);
+    expect(foundationCopy.hi.impactLabels).toHaveLength(foundationImpact.length);
+  });
+  it("donation copy says no money is collected online", () => {
+    expect(foundationCopy.en.involved.cards.find(c => c.kind === "donation_pledge")?.text).toMatch(/no money/i);
+  });
+});
