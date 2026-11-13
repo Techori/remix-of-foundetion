@@ -137,4 +137,4 @@ export const foundationCopy = {
     impactLabels: ["सहायता पाए विद्यार्थी", "मदद पाए पशु", "सहायता पाए लोग", "सहायता पाए परिवार"],
     footer: "RILOYD फ़ाउंडेशन — RILOYD की सामाजिक पहल।",
   },
-} as const;
+};
