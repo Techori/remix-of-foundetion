@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DownloadsRouteImport } from './routes/downloads'
+import { Route as EducationSupportRouteImport } from './routes/education-support'
 import { Route as FoundationRouteImport } from './routes/foundation'
 import { Route as FundingProgrammeRouteImport } from './routes/funding-programme'
 import { Route as PaymentRouteImport } from './routes/payment'
@@ -67,6 +68,11 @@ const ContactRoute = ContactRouteImport.update({
 const DownloadsRoute = DownloadsRouteImport.update({
   id: '/downloads',
   path: '/downloads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EducationSupportRoute = EducationSupportRouteImport.update({
+  id: '/education-support',
+  path: '/education-support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FoundationRoute = FoundationRouteImport.update({
@@ -224,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/education-support': typeof EducationSupportRoute
   '/foundation': typeof FoundationRoute
   '/funding-programme': typeof FundingProgrammeRoute
   '/payment': typeof PaymentRoute
@@ -260,6 +267,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/education-support': typeof EducationSupportRoute
   '/foundation': typeof FoundationRoute
   '/funding-programme': typeof FundingProgrammeRoute
   '/payment': typeof PaymentRoute
@@ -297,6 +305,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/downloads': typeof DownloadsRoute
+  '/education-support': typeof EducationSupportRoute
   '/foundation': typeof FoundationRoute
   '/funding-programme': typeof FundingProgrammeRoute
   '/payment': typeof PaymentRoute
@@ -335,6 +344,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/downloads'
+    | '/education-support'
     | '/foundation'
     | '/funding-programme'
     | '/payment'
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/downloads'
+    | '/education-support'
     | '/foundation'
     | '/funding-programme'
     | '/payment'
@@ -407,6 +418,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/downloads'
+    | '/education-support'
     | '/foundation'
     | '/funding-programme'
     | '/payment'
@@ -444,6 +456,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ContactRoute: typeof ContactRoute
   DownloadsRoute: typeof DownloadsRoute
+  EducationSupportRoute: typeof EducationSupportRoute
   FoundationRoute: typeof FoundationRoute
   FundingProgrammeRoute: typeof FundingProgrammeRoute
   PaymentRoute: typeof PaymentRoute
@@ -510,6 +523,13 @@ declare module '@tanstack/react-router' {
       path: '/downloads'
       fullPath: '/downloads'
       preLoaderRoute: typeof DownloadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/education-support': {
+      id: '/education-support'
+      path: '/education-support'
+      fullPath: '/education-support'
+      preLoaderRoute: typeof EducationSupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/foundation': {
@@ -724,6 +744,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ContactRoute: ContactRoute,
   DownloadsRoute: DownloadsRoute,
+  EducationSupportRoute: EducationSupportRoute,
   FoundationRoute: FoundationRoute,
   FundingProgrammeRoute: FundingProgrammeRoute,
   PaymentRoute: PaymentRoute,
