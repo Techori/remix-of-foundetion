@@ -61,6 +61,13 @@ export const educationSupportBase = z.object({
   coordinatorCode: z.string().trim().max(40).regex(/^[A-Za-z0-9-]*$/, "Coordinator code can contain only letters, numbers and dashes."),
   // Application
   applicationType: z.enum(applicationTypeKeys as [ApplicationType, ...ApplicationType[]], { errorMap: () => ({ message: "Select what you are applying for." }) }),
+  bankHolder: required("Enter the account holder name.", 100),
+  bankName: required("Enter the bank name.", 100),
+  bankAccount: z.string().trim().regex(/^\d{9,18}$/, "Enter a valid 9–18 digit bank account number."),
+  bankAccountConfirm: z.string().trim(),
+  bankIfsc: z.string().trim().toUpperCase().regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, "Enter a valid IFSC code."),
+  aadhaarNumber: z.string().trim().regex(/^[2-9]\d{11}$/, "Enter the full 12-digit Aadhaar number."),
+  kycConsent: tick("Please consent to secure bank and identity verification."),
   // Declarations
   confirmAccurate: tick("Please confirm the information is accurate."),
   agreeTerms: tick("Please agree to the registration terms."),
@@ -119,6 +126,7 @@ export function conditionalIssues(raw: Partial<Record<keyof BaseValues, unknown>
 
 export const educationSupportSchema = educationSupportBase.superRefine((v, ctx) => {
   for (const i of conditionalIssues(v)) ctx.addIssue({ code: "custom", path: [i.path], message: i.message });
+  if (v.bankAccount !== v.bankAccountConfirm) ctx.addIssue({ code: "custom", path: ["bankAccountConfirm"], message: "Bank account numbers do not match." });
 });
 
 /** First error message per field for the given step's fields. */
@@ -134,7 +142,7 @@ export function stepErrors(values: Record<string, unknown>, fields: string[]): R
 export type EducationSupportInput = z.input<typeof educationSupportSchema>;
 
 export const paymentReferenceSchema = z.object({
-  ackNumber: z.string().trim().regex(/^SCH-\d{4}-\d{8}$/, "Invalid acknowledgement number."),
+  ackNumber: z.string().trim().regex(/^(\d{15}|SCH-\d{4}-\d{8})$/, "Invalid acknowledgement number."),
   receiptToken: z.string().regex(/^[a-f0-9]{64}$/),
   reference: z.string().trim().regex(/^[A-Za-z0-9_-]{6,60}$/, "Enter the payment ID from your Razorpay receipt (e.g. pay_XXXXXXXX)."),
 });
@@ -144,7 +152,8 @@ export const educationReviewSchema = z.object({
   status: z.enum(registrationStatuses).optional(),
   paymentStatus: z.enum(paymentStatuses).optional(),
   reason: z.string().trim().max(500).optional(),
-}).refine(v => v.status || v.paymentStatus, "Nothing to update.");
+  approvalStatus: z.enum(["pending", "approved", "rejected"]).optional(),
+}).refine(v => v.status || v.paymentStatus || v.approvalStatus, "Nothing to update.");
 
 /** Fields shown on each step, used to validate one step at a time. */
 export const stepFields: string[][] = [
@@ -154,4 +163,5 @@ export const stepFields: string[][] = [
   ["withoutCoordinator", "coordinatorName", "coordinatorMobile", "coordinatorWhatsapp", "coordinatorEmail", "coordinatorType", "coordinatorInstitution", "coordinatorIdText", "coordinatorCode"],
   ["applicationType"],
   ["confirmAccurate", "agreeTerms", "consentVerification", "authorizeContact", "understandFees"],
+  ["bankHolder", "bankName", "bankAccount", "bankAccountConfirm", "bankIfsc", "aadhaarNumber", "kycConsent"],
 ];

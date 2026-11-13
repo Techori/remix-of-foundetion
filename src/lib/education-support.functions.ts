@@ -27,6 +27,10 @@ export const submitEducationSupport = createServerFn({ method: "POST" })
       : { courseName: v.courseName, courseSpecialization: v.courseSpecialization, collegeName: v.collegeName, enrollmentNumber: v.enrollmentNumber, currentYear: v.currentYear, currentSemester: v.currentSemester, studyMode: v.studyMode, collegeState: v.collegeState, collegeCity: v.collegeCity, academicSession: v.academicSession };
     const receiptToken = Array.from(crypto.getRandomValues(new Uint8Array(32)), b => b.toString(16).padStart(2, "0")).join("");
     const fee = applicationTypes[v.applicationType].fee;
+    const secret = process.env['EDUCATION_KYC_ENCRYPTION_KEY'];
+    if (!secret) throw new Error('Secure identity storage is unavailable. Please contact the Foundation team.');
+    const { encryptDetails } = await import('./education-support/privacy.server');
+    const privateDetails = await encryptDetails({ bankHolder: v.bankHolder, bankName: v.bankName, bankAccount: v.bankAccount, bankIfsc: v.bankIfsc, aadhaarNumber: v.aadhaarNumber }, secret);
     const { data: row, error } = await supabaseAdmin.from("education_support_registrations").insert({
       student_category: v.studentCategory,
       current_class: school ? v.currentClass : null,
@@ -45,7 +49,8 @@ export const submitEducationSupport = createServerFn({ method: "POST" })
       coordinator_code: code || null, coordinator_id: coordinatorId,
       application_type: v.applicationType, registration_fee: fee,
       receipt_token_hash: await sha256Hex(receiptToken),
-      declarations: { confirmAccurate: true, agreeTerms: true, consentVerification: true, authorizeContact: true, understandFees: true, guardianConsent: minor ? v.guardianConsent : null, at: new Date().toISOString() },
+      private_details_ciphertext: privateDetails, aadhaar_last_four: v.aadhaarNumber.slice(-4),
+      declarations: { confirmAccurate: true, agreeTerms: true, consentVerification: true, authorizeContact: true, understandFees: true, kycConsent: true, guardianConsent: minor ? v.guardianConsent : null, at: new Date().toISOString() },
     }).select("ack_number, created_at").single();
     if (error || !row) throw new Error("Your registration could not be saved. Please try again.");
     return { ackNumber: row.ack_number, createdAt: row.created_at, receiptToken, fee, applicationType: v.applicationType as ApplicationType, coordinatorName: v.withoutCoordinator ? "" : v.coordinatorName };
@@ -92,9 +97,11 @@ export const listEducationSupport = createServerFn({ method: "POST" })
       if (s) query = query.or(`ack_number.ilike.%${s}%,student_name.ilike.%${s}%,mobile.ilike.%${s}%,email.ilike.%${s}%`);
     }
     query = query.order("created_at", { ascending: false });
-    const { data: rows, error, count } = data.all ? await query.limit(2000) : await query.range(data.page * 20, data.page * 20 + 19);
+    const { data: rows, error, count } = await query.range(data.page * (data.all ? 500 : 20), data.page * (data.all ? 500 : 20) + (data.all ? 499 : 19));
     if (error) throw new Error("Education support registrations could not be loaded.");
-    return { rows: rows ?? [], count: count ?? 0 };
+    const ids = (rows ?? []).map(r => r.id);
+    const { data: approvalRows } = ids.length ? await context.supabase.from('education_support_registrations').select('id, approval_status, aadhaar_last_four').in('id', ids) : { data: [] };
+    return { rows: (rows ?? []).map(r => ({ ...r, approval_status: approvalRows?.find(a => a.id === r.id)?.approval_status ?? 'pending', aadhaar_last_four: approvalRows?.find(a => a.id === r.id)?.aadhaar_last_four ?? null })), count: count ?? 0 };
   });
 
 export const reviewEducationSupport = createServerFn({ method: "POST" })
@@ -103,11 +110,26 @@ export const reviewEducationSupport = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { data: admin, error: roleError } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
     if (!admin || roleError) throw new Error("Admin access required.");
-    const update: { status?: string; payment_status?: string; status_reason?: string } = {};
+    const update: { status?: string; payment_status?: string; status_reason?: string; approval_status?: string } = {};
     if (data.status) update.status = data.status;
     if (data.paymentStatus) update.payment_status = data.paymentStatus;
     if (data.reason !== undefined) update.status_reason = data.reason;
+    if (data.approvalStatus) update.approval_status = data.approvalStatus;
     const { error } = await context.supabase.from("education_support_registrations").update(update).eq("id", data.id);
-    if (error) throw new Error("The registration could not be updated.");
+    if (error) throw new Error(data.approvalStatus === 'approved' ? 'Confirm the completed payment before approving this registration.' : "The registration could not be updated.");
     return { ok: true };
+  });
+
+export const getEducationPrivateDetails = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((v: unknown) => z.object({ id: z.string().uuid() }).parse(v))
+  .handler(async ({ context, data }) => {
+    const { data: admin } = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'admin' });
+    if (!admin) throw new Error('Admin access required.');
+    const { data: row, error } = await context.supabase.from('education_support_registrations').select('private_details_ciphertext').eq('id', data.id).single();
+    if (error) throw new Error('Identity details could not be loaded.');
+    if (!row?.private_details_ciphertext) return { details: {} as Record<string, string> };
+    const secret = process.env['EDUCATION_KYC_ENCRYPTION_KEY'];
+    if (!secret) throw new Error('Secure identity access is unavailable.');
+    const { decryptDetails } = await import('./education-support/privacy.server');
+    return { details: await decryptDetails(row.private_details_ciphertext, secret) };
   });

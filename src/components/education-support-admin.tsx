@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ChevronLeft, ChevronRight, Download, Eye, RefreshCw, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Eye, RefreshCw, Search, Check, X, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
-import { listEducationSupport, reviewEducationSupport } from "@/lib/education-support.functions";
+import { listEducationSupport, reviewEducationSupport, getEducationPrivateDetails } from "@/lib/education-support.functions";
+import { canApprove, stateCodes } from '@/lib/education-support/numbering';
 import { applicationTypeKeys, applicationTypes, paymentStatuses, paymentStatusLabels, registrationStatuses, registrationStatusLabels, studentCategories, type ApplicationType, type StudentCategory } from "@/lib/education-support/rules";
 
 const categoryLabels: Record<StudentCategory, string> = { school: "School", ug: "UG", pg: "PG" };
@@ -19,23 +20,33 @@ export function EducationSupportAdmin() {
   const [filters, setFilters] = useState<Filters>({ search: "", category: "", applicationType: "", paymentStatus: "" });
   const [selected, setSelected] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  const [exportFile, setExportFile] = useState<{ url: string; name: string } | null>(null);
+  const [details, setDetails] = useState<Record<string, string> | null>(null);
+  const [detailsBusy, setDetailsBusy] = useState(false);
+  const privateDetails = useServerFn(getEducationPrivateDetails);
   const list = useServerFn(listEducationSupport);
   const review = useServerFn(reviewEducationSupport);
   const queryClient = useQueryClient();
   const params = { page, ...(filters.search ? { search: filters.search } : {}), ...(filters.category ? { category: filters.category } : {}), ...(filters.applicationType ? { applicationType: filters.applicationType } : {}), ...(filters.paymentStatus ? { paymentStatus: filters.paymentStatus } : {}) };
   const query = useQuery({ queryKey: ["admin-education-support", params], queryFn: () => list({ data: params }) });
   const mutation = useMutation({
-    mutationFn: (data: { id: string; status?: (typeof registrationStatuses)[number]; paymentStatus?: (typeof paymentStatuses)[number]; reason?: string }) => review({ data }),
+    mutationFn: (data: { id: string; status?: (typeof registrationStatuses)[number]; paymentStatus?: (typeof paymentStatuses)[number]; reason?: string; approvalStatus?: 'pending'|'approved'|'rejected' }) => review({ data }),
     onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ["admin-education-support"] }); toast.success("Registration updated."); },
     onError: e => toast.error(e.message),
   });
   const exportMutation = useMutation({
-    mutationFn: () => list({ data: { ...params, page: 0, all: true } }),
+    mutationFn: async (format: 'csv'|'xlsx') => {
+      const rows: Record<string, unknown>[] = [];
+      for (let p = 0; ; p++) { const r = await list({ data: { ...params, page: p, all: true } }); rows.push(...r.rows); if (rows.length >= r.count || r.rows.length === 0) break; }
+      const cols = Object.keys(rows[0] ?? { ack_number: '' });
+      let blob: Blob;
+      if (format === 'csv') { const safeCell = (v: unknown) => csvCell(typeof v === 'string' && /^[=+@-]/.test(v) ? `'${v}` : v); blob = new Blob(['\ufeff' + [cols.join(','), ...rows.map(r => cols.map(c => safeCell(r[c])).join(','))].join('\n')], { type: 'text/csv;charset=utf-8' }); }
+      else { const ExcelJS = await import('exceljs'); const book = new ExcelJS.Workbook(); const sheet = book.addWorksheet('Registrations'); sheet.addRow(cols); rows.forEach(r => sheet.addRow(cols.map(c => typeof r[c] === 'object' ? JSON.stringify(r[c]) : r[c]))); sheet.views = [{ state: 'frozen', ySplit: 1 }]; sheet.getRow(1).font = { bold: true }; sheet.columns.forEach(c => { c.width = 24; }); const buffer = await book.xlsx.writeBuffer(); blob = new Blob([new Uint8Array(buffer)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }); }
+      return { blob, format };
+    },
     onSuccess: r => {
-      const cols = Object.keys(r.rows[0] ?? { ack_number: "" });
-      const csv = [cols.join(","), ...r.rows.map(row => cols.map(c => csvCell((row as Record<string, unknown>)[c])).join(","))].join("\n");
-      const url = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
-      const a = document.createElement("a"); a.href = url; a.download = `education-support-${new Date().toISOString().slice(0, 10)}.csv`; a.click(); URL.revokeObjectURL(url);
+      if (exportFile) URL.revokeObjectURL(exportFile.url);
+      setExportFile({ url: URL.createObjectURL(r.blob), name: `education-support-${new Date().toISOString().slice(0,10)}.${r.format}` });
     },
     onError: e => toast.error(e.message),
   });
@@ -46,7 +57,9 @@ export function EducationSupportAdmin() {
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h2 className="text-xl font-bold">Education Support registrations</h2>
       <div className="flex gap-2">
-        <Button variant="outline" onClick={() => exportMutation.mutate()} disabled={exportMutation.isPending}><Download /> {exportMutation.isPending ? "Preparing…" : "Export CSV"}</Button>
+        <Button variant="outline" onClick={() => exportMutation.mutate('csv')} disabled={exportMutation.isPending}><Download /> Export CSV</Button>
+        <Button variant="outline" onClick={() => exportMutation.mutate('xlsx')} disabled={exportMutation.isPending}><Download /> {exportMutation.isPending ? 'Preparing…' : 'Prepare Excel'}</Button>
+        {exportFile && <Button asChild><a href={exportFile.url} download={exportFile.name}><Download />Download {exportFile.name.endsWith('xlsx') ? 'Excel' : 'CSV'}</a></Button>}
         <Button variant="outline" size="icon" aria-label="Refresh education support registrations" onClick={() => query.refetch()}><RefreshCw /></Button>
       </div>
     </div>
@@ -70,8 +83,8 @@ export function EducationSupportAdmin() {
         <td className="max-w-48 px-3 py-3">{r.current_class ? `Class ${r.current_class}` : r.course_name}<br /><span className="text-xs text-muted-foreground">{r.education_sector ?? ""}</span></td>
         <td className="px-3 py-3">{applicationTypes[r.application_type as ApplicationType]?.en ?? r.application_type}<br /><span className="text-xs text-muted-foreground">₹{r.registration_fee}</span></td>
         <td className="px-3 py-3 text-xs">{paymentStatusLabels[r.payment_status as keyof typeof paymentStatusLabels] ?? r.payment_status}{r.payment_reference && <><br /><span className="font-mono">{r.payment_reference}</span></>}</td>
-        <td className="px-3 py-3 text-xs">{registrationStatusLabels[r.status as keyof typeof registrationStatusLabels] ?? r.status}</td>
-        <td className="px-3 py-3"><Button variant="outline" size="icon" aria-label={`View ${r.ack_number}`} onClick={() => { setSelected(r.id); setReason(r.status_reason); }}><Eye /></Button></td>
+        <td className="px-3 py-3 text-xs">{registrationStatusLabels[r.status as keyof typeof registrationStatusLabels] ?? r.status}<br /><strong>{r.approval_status}</strong></td>
+        <td className="px-3 py-3"><Button variant="outline" size="icon" aria-label={`View ${r.ack_number}`} onClick={() => { setSelected(r.id); setReason(r.status_reason); setDetails(null); }}><Eye /></Button></td>
       </tr>)}</tbody>
     </table></div>
     {!query.isPending && !query.error && query.data?.count === 0 && <p className="py-8 text-sm text-muted-foreground">No registrations yet.</p>}
@@ -83,6 +96,12 @@ export function EducationSupportAdmin() {
 
     {row && <div className="mt-8 border-t border-border pt-6">
       <h3 className="text-lg font-bold">{row.ack_number} · {row.student_name}</h3>
+      <div className="mt-4 flex flex-wrap gap-3">
+        <Button disabled={mutation.isPending || !canApprove(row.payment_status)} onClick={() => mutation.mutate({ id: row.id, approvalStatus: 'approved', reason })}><Check />Approve registration</Button>
+        <Button variant="outline" disabled={mutation.isPending} onClick={() => mutation.mutate({ id: row.id, approvalStatus: 'rejected', reason })}><X />Reject registration</Button>
+        <Button variant="outline" disabled={detailsBusy} onClick={() => { setDetailsBusy(true); void privateDetails({ data: { id: row.id } }).then(r => setDetails(r.details)).catch(e => toast.error(e.message)).finally(() => setDetailsBusy(false)); }}><Shield />View private bank & KYC</Button>
+      </div>
+      {details && <dl className="mt-4 grid gap-3 sm:grid-cols-2">{Object.entries(details).map(([k,v]) => <div key={k}><dt className="font-bold">{k}</dt><dd className="break-all">{v}</dd></div>)}{Object.keys(details).length === 0 && <p>Not collected for this earlier registration.</p>}<Button variant="outline" onClick={() => setDetails(null)}>Hide private details</Button></dl>}
       <div className="mt-4 grid gap-4 rounded-lg border border-border p-4 sm:grid-cols-3">
         <label className="text-sm font-semibold">Payment
           <select className={`${selectClass} mt-1 w-full`} value={row.payment_status} disabled={mutation.isPending} onChange={e => mutation.mutate({ id: row.id, paymentStatus: e.target.value as (typeof paymentStatuses)[number] })}>{paymentStatuses.map(p => <option key={p} value={p}>{paymentStatusLabels[p]}</option>)}</select>
@@ -101,5 +120,6 @@ export function EducationSupportAdmin() {
           ["Applied for", `${applicationTypes[row.application_type as ApplicationType]?.en ?? row.application_type} · ₹${row.registration_fee}`], ["Payment ID", row.payment_reference ? `${row.payment_reference} (${row.payment_reference_at ? new Date(row.payment_reference_at).toLocaleString("en-IN") : ""})` : "Not shared yet"], ["Registered", new Date(row.created_at).toLocaleString("en-IN")]] as [string, string][]).map(([k, v]) => <div key={k}><dt className="font-bold text-primary">{k}</dt><dd className="mt-0.5 whitespace-pre-wrap break-words">{v}</dd></div>)}
       </dl>
     </div>}
+    <details className="mt-8 border-t border-border pt-4"><summary className="cursor-pointer font-semibold">State / UT acknowledgement codes</summary><div className="mt-3 grid gap-2 text-sm sm:grid-cols-3">{stateCodes.map(s => <p key={s.code}>{s.code} · {s.name}</p>)}</div><p className="mt-3 text-sm text-muted-foreground">Districts receive a permanent two-digit code on first registration within their state. Student serial numbers are global and do not reset daily. Earlier acknowledgement numbers remain valid.</p></details>
   </section>;
 }

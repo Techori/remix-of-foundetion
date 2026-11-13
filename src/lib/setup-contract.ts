@@ -58,6 +58,7 @@ const baseline = (name: string, fields: string): Table => ({ name, rls: true, co
   return [{ name: column, type: normalizeType(type.replace('?', '')), nullable: type.endsWith('?') }];
 }) });
 const parsedTables = migrationSources.flatMap(parseSqlTables);
+parsedTables.push(baseline('education_support_registrations', 'id:uuid ack_number:text student_category:text current_class:text? course_name:text? education_sector:text? institution_name:text education:jsonb student_name:text father_name:text mother_name:text date_of_birth:date gender:text nationality:text mobile:text whatsapp:text? email:text permanent_address:text current_address:text state:text district:text city:text pin_code:text is_minor:boolean guardian_name:text? guardian_mobile:text? guardian_email:text? guardian_relationship:text? guardian_consent_at:timestamptz? without_coordinator:boolean coordinator:jsonb coordinator_code:text? coordinator_id:uuid? application_type:text registration_fee:integer payment_status:text payment_reference:text? payment_reference_at:timestamptz? receipt_token_hash:text status:text status_reason:text declarations:jsonb created_at:timestamptz updated_at:timestamptz'));
 for (const source of migrationSources) applySqlAlters(parsedTables, source);
 export const expectedTables: Table[] = [
   ...parsedTables,
@@ -78,8 +79,8 @@ export const expectedTables: Table[] = [
     baseline('young_innovators_registrations', 'id:uuid application_code:text student_name:text school_class:integer city:text guardian_name:text guardian_email:text guardian_phone:text idea_title:text idea:text guardian_consent:boolean consent_at:timestamptz fee_amount:integer gst_percent:integer status:text created_at:timestamptz'),
   ].filter(t => !parsedTables.some(p => p.name === t.name)),
 ];
-export const expectedFunctions = ['has_role', 'admin_save_employee', 'verify_employee', 'consume_form_submission_limit', 'claim_first_admin', 'first_admin_setup_status', 'admin_import_records', 'create_account_profile', 'admin_setup_metadata', 'sync_approved_application_profile'];
-export const expectedTriggers = ['create_account_profile', 'sync_approved_application_profile'];
+export const expectedFunctions = ['has_role', 'admin_save_employee', 'verify_employee', 'consume_form_submission_limit', 'claim_first_admin', 'first_admin_setup_status', 'admin_import_records', 'create_account_profile', 'admin_setup_metadata', 'sync_approved_application_profile', 'assign_education_ack_number', 'guard_education_approval'];
+export const expectedTriggers = ['create_account_profile', 'sync_approved_application_profile', 'assign_education_ack', 'guard_education_approval'];
 export const drizzleSchemaEmpty = !/\b(?:pgTable|pgSchema)\s*\(/.test(drizzleSource);
 export function compareSchema(expected: Table[], actual: Table[]): Finding[] {
   const findings: Finding[] = [];

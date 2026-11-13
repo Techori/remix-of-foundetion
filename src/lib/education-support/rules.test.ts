@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { applicationTypes, educationSupportSchema, isMinor, registrationFee, stepErrors, stepFields } from "./rules";
 import { indianStates, pgCourses, ugCourses, educationSectors } from "./catalog";
+import { formatAcknowledgement, stateCodes, canApprove } from './numbering';
 
 const adult = {
+  bankHolder: 'Test Student', bankName: 'Test Bank', bankAccount: '123456789012', bankAccountConfirm: '123456789012', bankIfsc: 'SBIN0001234', aadhaarNumber: '234567890123', kycConsent: true,
   studentCategory: "ug", currentClass: "", schoolName: "", schoolType: "", schoolBoard: "", schoolAddress: "", schoolCity: "", schoolState: "", schoolPin: "",
   courseName: "BSc Physics", courseSpecialization: "", collegeName: "Jiwaji University", enrollmentNumber: "", currentYear: "2nd", currentSemester: "", studyMode: "Regular", collegeState: "Madhya Pradesh", collegeCity: "Gwalior",
   educationSector: "Research & Development", academicSession: "2026-27",
@@ -44,9 +46,17 @@ describe("Education Support registration rules", () => {
   it("requires every declaration", () => expect(educationSupportSchema.safeParse({ ...adult, understandFees: false }).success).toBe(false));
   it("checks one step without needing later steps", () => {
     const fresh = { ...adult, confirmAccurate: false, applicationType: "" };
-    expect(stepErrors(fresh, stepFields[0]!)).toEqual({});
-    expect(Object.keys(stepErrors({ ...fresh, collegeName: "" }, stepFields[0]!))).toEqual(["collegeName"]);
+    expect(stepErrors(fresh, stepFields[0] ?? [])).toEqual({});
+    expect(Object.keys(stepErrors({ ...fresh, collegeName: "" }, stepFields[0] ?? []))).toEqual(["collegeName"]);
   });
+});
+
+describe('Acknowledgement and verification rules', () => {
+  it('uses YYMMDD + state + district + five digit global serial', () => expect(formatAcknowledgement('261113', '13', '01', 1)).toBe('261113130100001'));
+  it('supports the final serial 99999 and refuses 100000', () => { expect(formatAcknowledgement('261114', '13', '01', 99999)).toBe('261114130199999'); expect(() => formatAcknowledgement('261114', '13', '01', 100000)).toThrow(); });
+  it('keeps all 36 state/UT codes in the existing list order', () => { expect(stateCodes[0]).toEqual({ name: 'Andhra Pradesh', code: '01' }); expect(stateCodes[35]).toEqual({ name: 'Puducherry', code: '36' }); });
+  it('allows approval only after payment is confirmed', () => { expect(canApprove('paid')).toBe(true); expect(canApprove('reference_submitted')).toBe(false); expect(canApprove('pending')).toBe(false); });
+  it('requires full Aadhaar and matching bank details', () => { expect(educationSupportSchema.safeParse({ ...adult, aadhaarNumber: '0123' }).success).toBe(false); expect(educationSupportSchema.safeParse({ ...adult, bankAccountConfirm: '999999999' }).success).toBe(false); });
 });
 
 describe("Education Support lists", () => {
