@@ -23,6 +23,7 @@ export function SetupAdmin() {
       <h2 className="flex items-center gap-2 text-2xl font-black uppercase"><ShieldCheck size={24} /> Setup check <span className="text-xs font-medium text-muted-foreground">Read only</span></h2>
       <Button onClick={() => void check()} disabled={busy}><RefreshCw size={16} className={busy ? 'animate-spin' : ''} />{busy ? 'Checking…' : 'Run setup check'}</Button>
     </div>
+    <p className="mt-4 text-sm text-muted-foreground">This check reads existing setup only. It never restores copied migrations, runs them again, or changes your records.</p>
     {error && <p role="alert" className="mt-5 text-destructive">{error}</p>}
     <div className="mt-5 border-b border-border pb-5"><Button variant="outline" disabled={busy} onClick={async () => {
       if (!window.confirm('Only reset after restoring AI credits or model access. Resume prototype AI advice?')) return;

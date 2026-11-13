@@ -79,8 +79,8 @@ export const expectedTables: Table[] = [
     baseline('young_innovators_registrations', 'id:uuid application_code:text student_name:text school_class:integer city:text guardian_name:text guardian_email:text guardian_phone:text idea_title:text idea:text guardian_consent:boolean consent_at:timestamptz fee_amount:integer gst_percent:integer status:text created_at:timestamptz'),
   ].filter(t => !parsedTables.some(p => p.name === t.name)),
 ];
-export const expectedFunctions = ['has_role', 'admin_save_employee', 'verify_employee', 'consume_form_submission_limit', 'claim_first_admin', 'first_admin_setup_status', 'admin_import_records', 'create_account_profile', 'admin_setup_metadata', 'sync_approved_application_profile'];
-export const expectedTriggers = ['create_account_profile', 'sync_approved_application_profile'];
+export const expectedFunctions = ['has_role', 'admin_save_employee', 'verify_employee', 'consume_form_submission_limit', 'claim_first_admin', 'first_admin_setup_status', 'admin_import_records', 'create_account_profile', 'admin_setup_metadata', 'sync_approved_application_profile', 'assign_education_ack_number', 'guard_education_approval'];
+export const expectedTriggers = ['create_account_profile', 'sync_approved_application_profile', 'assign_education_ack', 'guard_education_approval'];
 export const drizzleSchemaEmpty = !/\b(?:pgTable|pgSchema)\s*\(/.test(drizzleSource);
 export function compareSchema(expected: Table[], actual: Table[]): Finding[] {
   const findings: Finding[] = [];
