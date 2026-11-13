@@ -1,0 +1,113 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { applicationTypes, educationReviewSchema, educationSupportSchema, isMinor, paymentReferenceSchema, paymentStatuses, studentCategories, applicationTypeKeys, type ApplicationType } from "./education-support/rules";
+
+async function sha256Hex(value: string) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, "0")).join("");
+}
+
+export const submitEducationSupport = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => educationSupportSchema.parse(input))
+  .handler(async ({ data: v }) => {
+    const { limitSubmission } = await import("./submissions.server");
+    await limitSubmission(v.email);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const code = v.withoutCoordinator ? "" : v.coordinatorCode.toUpperCase();
+    let coordinatorId: string | null = null;
+    if (code) {
+      const { data: c } = await supabaseAdmin.from("coordinators").select("id").eq("referral_code", code).eq("active", true).maybeSingle();
+      coordinatorId = c?.id ?? null;
+    }
+    const minor = isMinor(v.dateOfBirth);
+    const school = v.studentCategory === "school";
+    const education = school
+      ? { currentClass: v.currentClass, schoolName: v.schoolName, schoolType: v.schoolType, schoolBoard: v.schoolBoard, schoolAddress: v.schoolAddress, schoolCity: v.schoolCity, schoolState: v.schoolState, schoolPin: v.schoolPin, academicSession: v.academicSession }
+      : { courseName: v.courseName, courseSpecialization: v.courseSpecialization, collegeName: v.collegeName, enrollmentNumber: v.enrollmentNumber, currentYear: v.currentYear, currentSemester: v.currentSemester, studyMode: v.studyMode, collegeState: v.collegeState, collegeCity: v.collegeCity, academicSession: v.academicSession };
+    const receiptToken = Array.from(crypto.getRandomValues(new Uint8Array(32)), b => b.toString(16).padStart(2, "0")).join("");
+    const fee = applicationTypes[v.applicationType].fee;
+    const { data: row, error } = await supabaseAdmin.from("education_support_registrations").insert({
+      student_category: v.studentCategory,
+      current_class: school ? v.currentClass : null,
+      course_name: school ? null : v.courseName,
+      education_sector: v.educationSector || null,
+      institution_name: school ? v.schoolName : v.collegeName,
+      education,
+      student_name: v.studentName, father_name: v.fatherName, mother_name: v.motherName, date_of_birth: v.dateOfBirth,
+      gender: v.gender, nationality: v.nationality, mobile: v.mobile, whatsapp: v.whatsapp || null, email: v.email,
+      permanent_address: v.permanentAddress, current_address: v.currentAddress, state: v.state, district: v.district, city: v.city, pin_code: v.pinCode,
+      is_minor: minor,
+      guardian_name: v.guardianName || null, guardian_mobile: v.guardianMobile || null, guardian_email: v.guardianEmail || null, guardian_relationship: v.guardianRelationship || null,
+      guardian_consent_at: minor && v.guardianConsent ? new Date().toISOString() : null,
+      without_coordinator: v.withoutCoordinator,
+      coordinator: v.withoutCoordinator ? {} : { name: v.coordinatorName, mobile: v.coordinatorMobile, whatsapp: v.coordinatorWhatsapp, email: v.coordinatorEmail, type: v.coordinatorType, institution: v.coordinatorInstitution, coordinatorId: v.coordinatorIdText },
+      coordinator_code: code || null, coordinator_id: coordinatorId,
+      application_type: v.applicationType, registration_fee: fee,
+      receipt_token_hash: await sha256Hex(receiptToken),
+      declarations: { confirmAccurate: true, agreeTerms: true, consentVerification: true, authorizeContact: true, understandFees: true, guardianConsent: minor ? v.guardianConsent : null, at: new Date().toISOString() },
+    }).select("ack_number, created_at").single();
+    if (error || !row) throw new Error("Your registration could not be saved. Please try again.");
+    return { ackNumber: row.ack_number, createdAt: row.created_at, receiptToken, fee, applicationType: v.applicationType as ApplicationType, coordinatorName: v.withoutCoordinator ? "" : v.coordinatorName };
+  });
+
+export const submitEducationPaymentReference = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => paymentReferenceSchema.parse(input))
+  .handler(async ({ data }) => {
+    const { limitSubmission } = await import("./submissions.server");
+    await limitSubmission(data.ackNumber);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin.from("education_support_registrations")
+      .update({ payment_reference: data.reference, payment_reference_at: new Date().toISOString(), payment_status: "reference_submitted" })
+      .eq("ack_number", data.ackNumber).eq("receipt_token_hash", await sha256Hex(data.receiptToken)).in("payment_status", ["pending", "reference_submitted"])
+      .select("ack_number");
+    if (error) throw new Error("The payment ID could not be saved. Please try again.");
+    if (!rows?.length) throw new Error("This registration could not be updated. Please contact the Foundation team with your acknowledgement number.");
+    return { ok: true };
+  });
+
+const listSchema = z.object({
+  page: z.number().int().min(0).max(10000),
+  search: z.string().trim().max(100).optional(),
+  category: z.enum(studentCategories).optional(),
+  applicationType: z.enum(applicationTypeKeys as [ApplicationType, ...ApplicationType[]]).optional(),
+  paymentStatus: z.enum(paymentStatuses).optional(),
+  all: z.boolean().optional(),
+});
+
+const adminColumns = "id, ack_number, student_category, current_class, course_name, education_sector, institution_name, education, student_name, father_name, mother_name, date_of_birth, gender, nationality, mobile, whatsapp, email, permanent_address, current_address, state, district, city, pin_code, is_minor, guardian_name, guardian_mobile, guardian_email, guardian_relationship, guardian_consent_at, without_coordinator, coordinator, coordinator_code, application_type, registration_fee, payment_status, payment_reference, payment_reference_at, status, status_reason, created_at, updated_at";
+
+export const listEducationSupport = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => listSchema.parse(input))
+  .handler(async ({ context, data }) => {
+    const { data: admin, error: roleError } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
+    if (!admin || roleError) throw new Error("Admin access required.");
+    let query = context.supabase.from("education_support_registrations").select(adminColumns, { count: "exact" });
+    if (data.category) query = query.eq("student_category", data.category);
+    if (data.applicationType) query = query.eq("application_type", data.applicationType);
+    if (data.paymentStatus) query = query.eq("payment_status", data.paymentStatus);
+    if (data.search) {
+      const s = data.search.replace(/[^A-Za-z0-9@.\- ]/g, "");
+      if (s) query = query.or(`ack_number.ilike.%${s}%,student_name.ilike.%${s}%,mobile.ilike.%${s}%,email.ilike.%${s}%`);
+    }
+    query = query.order("created_at", { ascending: false });
+    const { data: rows, error, count } = data.all ? await query.limit(2000) : await query.range(data.page * 20, data.page * 20 + 19);
+    if (error) throw new Error("Education support registrations could not be loaded.");
+    return { rows: rows ?? [], count: count ?? 0 };
+  });
+
+export const reviewEducationSupport = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => educationReviewSchema.parse(input))
+  .handler(async ({ context, data }) => {
+    const { data: admin, error: roleError } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
+    if (!admin || roleError) throw new Error("Admin access required.");
+    const update: { status?: string; payment_status?: string; status_reason?: string } = {};
+    if (data.status) update.status = data.status;
+    if (data.paymentStatus) update.payment_status = data.paymentStatus;
+    if (data.reason !== undefined) update.status_reason = data.reason;
+    const { error } = await context.supabase.from("education_support_registrations").update(update).eq("id", data.id);
+    if (error) throw new Error("The registration could not be updated.");
+    return { ok: true };
+  });
