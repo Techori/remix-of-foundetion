@@ -46,3 +46,4 @@
 
 - Student review sets only approved/rejected via an admin-validated server function and column-scoped RLS; approval never publishes minors or confirms payment.
 - The site has no online payment gateway: programme fees are shown for information and paid through the verified accounts on `/payment`; never add checkout code without an explicit request, so no form implies a confirmed payment.
+- The RILOYD Foundation lives at `/foundation` on this site (no external site); its English/Hindi copy sits in `src/lib/foundation-copy.ts` beside the shared rules in `src/lib/foundation.ts`, and its forms land in the admin "Foundation forms" tab, so menu, footer and admin stay in sync.
