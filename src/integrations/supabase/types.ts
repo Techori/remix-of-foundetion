@@ -184,6 +184,155 @@ export type Database = {
         }
         Relationships: []
       }
+      education_support_registrations: {
+        Row: {
+          ack_number: string
+          application_type: string
+          city: string
+          coordinator: Json
+          coordinator_code: string | null
+          coordinator_id: string | null
+          course_name: string | null
+          created_at: string
+          current_address: string
+          current_class: string | null
+          date_of_birth: string
+          declarations: Json
+          district: string
+          education: Json
+          education_sector: string | null
+          email: string
+          father_name: string
+          gender: string
+          guardian_consent_at: string | null
+          guardian_email: string | null
+          guardian_mobile: string | null
+          guardian_name: string | null
+          guardian_relationship: string | null
+          id: string
+          institution_name: string
+          is_minor: boolean
+          mobile: string
+          mother_name: string
+          nationality: string
+          payment_reference: string | null
+          payment_reference_at: string | null
+          payment_status: string
+          permanent_address: string
+          pin_code: string
+          receipt_token_hash: string
+          registration_fee: number
+          state: string
+          status: string
+          status_reason: string
+          student_category: string
+          student_name: string
+          updated_at: string
+          whatsapp: string | null
+          without_coordinator: boolean
+        }
+        Insert: {
+          ack_number?: string
+          application_type: string
+          city: string
+          coordinator?: Json
+          coordinator_code?: string | null
+          coordinator_id?: string | null
+          course_name?: string | null
+          created_at?: string
+          current_address: string
+          current_class?: string | null
+          date_of_birth: string
+          declarations?: Json
+          district: string
+          education?: Json
+          education_sector?: string | null
+          email: string
+          father_name: string
+          gender: string
+          guardian_consent_at?: string | null
+          guardian_email?: string | null
+          guardian_mobile?: string | null
+          guardian_name?: string | null
+          guardian_relationship?: string | null
+          id?: string
+          institution_name: string
+          is_minor?: boolean
+          mobile: string
+          mother_name: string
+          nationality?: string
+          payment_reference?: string | null
+          payment_reference_at?: string | null
+          payment_status?: string
+          permanent_address: string
+          pin_code: string
+          receipt_token_hash: string
+          registration_fee: number
+          state: string
+          status?: string
+          status_reason?: string
+          student_category: string
+          student_name: string
+          updated_at?: string
+          whatsapp?: string | null
+          without_coordinator?: boolean
+        }
+        Update: {
+          ack_number?: string
+          application_type?: string
+          city?: string
+          coordinator?: Json
+          coordinator_code?: string | null
+          coordinator_id?: string | null
+          course_name?: string | null
+          created_at?: string
+          current_address?: string
+          current_class?: string | null
+          date_of_birth?: string
+          declarations?: Json
+          district?: string
+          education?: Json
+          education_sector?: string | null
+          email?: string
+          father_name?: string
+          gender?: string
+          guardian_consent_at?: string | null
+          guardian_email?: string | null
+          guardian_mobile?: string | null
+          guardian_name?: string | null
+          guardian_relationship?: string | null
+          id?: string
+          institution_name?: string
+          is_minor?: boolean
+          mobile?: string
+          mother_name?: string
+          nationality?: string
+          payment_reference?: string | null
+          payment_reference_at?: string | null
+          payment_status?: string
+          permanent_address?: string
+          pin_code?: string
+          receipt_token_hash?: string
+          registration_fee?: number
+          state?: string
+          status?: string
+          status_reason?: string
+          student_category?: string
+          student_name?: string
+          updated_at?: string
+          whatsapp?: string | null
+          without_coordinator?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "education_support_registrations_coordinator_id_fkey"
+            columns: ["coordinator_id"]
+            isOneToOne: false
+            referencedRelation: "coordinators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_verification_attempts: {
         Row: {
           created_at: string
