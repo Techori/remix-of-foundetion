@@ -1,6 +1,10 @@
 // English / Hindi labels for the Education Support registration form.
 export type EduLang = "en" | "hi";
 export const eduLabels: Record<string, [string, string]> = {
+  bankHolder: ["Bank account holder name", "बैंक खाताधारक का नाम"], bankName: ["Bank name", "बैंक का नाम"],
+  bankAccount: ["Bank account number", "बैंक खाता संख्या"], bankAccountConfirm: ["Confirm account number", "खाता संख्या दोबारा भरें"], bankIfsc: ["IFSC code", "IFSC कोड"],
+  aadhaarNumber: ["Full Aadhaar number", "पूरी आधार संख्या"],
+  kycConsent: ["I consent to secure processing of bank and Aadhaar details for application verification. For a minor, I provide this consent as their parent/legal guardian.", "मैं आवेदन सत्यापन के लिए बैंक और आधार जानकारी के सुरक्षित उपयोग की सहमति देता/देती हूँ। नाबालिग के लिए यह सहमति माता-पिता/कानूनी अभिभावक की ओर से है।"],
   studentCategory: ["Student category", "विद्यार्थी श्रेणी"],
   school: ["School student (Class 4–12)", "स्कूल विद्यार्थी (कक्षा 4–12)"],
   ug: ["Undergraduate (UG) student", "स्नातक (UG) विद्यार्थी"],
@@ -33,6 +37,7 @@ export const eduLabels: Record<string, [string, string]> = {
 };
 
 export const eduSteps: Record<string, [string, string]> = {
+  bank: ["Bank & identity details", "बैंक और पहचान जानकारी"],
   education: ["Category & education", "श्रेणी और शिक्षा"],
   personal: ["Personal details", "व्यक्तिगत जानकारी"],
   guardian: ["Parent / guardian", "अभिभावक"],

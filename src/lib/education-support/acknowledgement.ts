@@ -24,5 +24,9 @@ export async function buildAcknowledgementPdf(d: AckData): Promise<Blob> {
   for (const [k, v] of rows) { doc.setTextColor(100, 116, 139); doc.setFont("helvetica", "normal"); doc.text(k, 40, y); doc.setTextColor(15, 23, 42); doc.setFont("helvetica", "bold"); doc.text(doc.splitTextToSize(v, 330), 220, y); y += 28; }
   doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(71, 85, 105);
   doc.text(doc.splitTextToSize("Scholarship amounts are maximum potential awards, not guaranteed payments. The registration fee is separate from selection; final eligibility and award amounts depend on verification and the official decision. Keep this acknowledgement number for all communication.", 515), 40, y + 20);
+  const QRCode = await import('qrcode');
+  const qr = await QRCode.toDataURL(`RILOYD Education Support\nAcknowledgement: ${d.ackNumber}`, { width: 240, margin: 2, errorCorrectionLevel: 'M' });
+  doc.addImage(qr, 'PNG', 40, y + 90, 90, 90);
+  doc.text('Registration reference QR — not proof of payment or approval.', 145, y + 135);
   return doc.output("blob");
 }
