@@ -162,3 +162,9 @@
 - [x] Create requested signup using normal auth; email verification pending, then the account can claim first-admin access.
 - [x] Extend safe read-only readiness checks with Education Support, district codes, staff access and required approval/numbering triggers; no copied migrations restored.
 - [ ] Run authenticated readiness check after account email verification and first-admin claim.
+
+## Employee onboarding and CRM
+- [ ] Onboard Support, Sales, BDE and BDM employees with verified accounts, admin-managed access, team assignment and deactivation.
+- [ ] Build a shared CRM workspace for leads/contacts, sales pipeline, follow-ups/tasks, activity history, support tickets, search/filters and reports.
+- [ ] Connect website enquiries and registrations to CRM records without exposing private student bank/KYC details.
+- [ ] Verify employee permissions and the complete admin/staff workflow with authenticated accounts.
