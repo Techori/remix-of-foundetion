@@ -1288,6 +1288,16 @@ export type Database = {
         }[]
       }
       crm_can_access: { Args: { _owner: string }; Returns: boolean }
+      crm_create_lead: { Args: { _input: Json }; Returns: string }
+      crm_customer_lookup: { Args: { _reference: string }; Returns: Json }
+      crm_import_submission: {
+        Args: { _id: string; _kind: string; _owner: string }
+        Returns: undefined
+      }
+      crm_onboard_member: {
+        Args: { _input: Json; _user_id: string }
+        Returns: undefined
+      }
       crm_role: { Args: never; Returns: string }
       first_admin_setup_status: { Args: never; Returns: string }
       has_role: {
