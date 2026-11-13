@@ -55,7 +55,7 @@ function FoundationPage() {
   const navLinks: [string, string][] = [["about", t.nav.about], ["programmes", t.nav.programmes], ["students", t.nav.students], ["how-we-help", t.nav.help], ["impact", t.nav.impact], ["get-involved", t.nav.involved], ["contact", t.nav.contact]];
 
   return <main lang={lang} className="foundation-page bg-foundation-paper text-foundation-ink">
-    <div className="sticky top-0 z-20 border-b border-foundation-green/15 bg-foundation-paper/95 backdrop-blur">
+    <div className="foundation-subnav sticky top-0 z-20 border-b border-foundation-green/15 bg-foundation-paper/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1280px] items-center gap-3 px-4 py-2.5 sm:px-6 lg:px-10">
         <a href="#top" className="flex shrink-0 items-center gap-2 text-sm font-black text-foundation-green"><HeartHandshake className="h-5 w-5 text-foundation-maroon" aria-hidden="true" /><span>RILOYD <span className="text-foundation-maroon">Foundation</span></span></a>
         <nav aria-label="Foundation sections" className="no-scrollbar flex min-w-0 flex-1 gap-4 overflow-x-auto whitespace-nowrap px-2 text-xs font-bold text-foundation-ink/75 lg:justify-center lg:gap-6">
