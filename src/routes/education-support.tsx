@@ -15,7 +15,8 @@ const DESCRIPTION = "Register for RILOYD Foundation education support: sponsorsh
 export const Route = createFileRoute("/education-support")({
   staticData: { sitemap: true },
   validateSearch: (search: Record<string, unknown>): { ref?: string } => {
-    const ref = typeof search.ref === "string" && /^[A-Za-z0-9-]{1,40}$/.test(search.ref) ? search.ref : undefined;
+    const raw = search["ref"];
+    const ref = typeof raw === "string" && /^[A-Za-z0-9-]{1,40}$/.test(raw) ? raw : undefined;
     return ref ? { ref } : {};
   },
   head: () => ({

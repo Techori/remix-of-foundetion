@@ -13,8 +13,8 @@ const boolFields = ["guardianConsent", "withoutCoordinator", "confirmAccurate", 
 const emptyValues = (): Values => {
   const v: Values = { nationality: "Indian" };
   for (const step of stepFields) for (const f of step) v[f] = boolFields.includes(f) ? false : (v[f] ?? "");
-  v.studentCategory = "";
-  v.applicationType = "";
+  v["studentCategory"] = "";
+  v["applicationType"] = "";
   return v;
 };
 
@@ -44,7 +44,7 @@ export function EducationSupportForm({ lang, initialCode }: { lang: EduLang; ini
   }, [initialCode]);
   useEffect(() => { if (loaded && !result) localStorage.setItem(DRAFT_KEY, JSON.stringify({ values, step })); }, [values, step, loaded, result]);
 
-  const dob = String(values.dateOfBirth ?? "");
+  const dob = String(values["dateOfBirth"] ?? "");
   const minor = /^\d{4}-\d{2}-\d{2}$/.test(dob) && isMinor(dob);
   const steps = useMemo(() => [
     { key: "education", fields: stepFields[0]! }, { key: "personal", fields: stepFields[1]! },
@@ -100,10 +100,10 @@ export function EducationSupportForm({ lang, initialCode }: { lang: EduLang; ini
     <span>{label ?? t(name)}{errors[name] && <span className="mt-1 block text-xs font-semibold text-destructive">{errors[name]}</span>}</span>
   </label>;
 
-  const category = values.studentCategory as StudentCategory | "";
+  const category = values["studentCategory"] as StudentCategory | "";
   const level = category === "pg" ? "pg" : "ug";
-  const courses = category && category !== "school" ? coursesFor(level, String(values.educationSector)) : [];
-  const appType = values.applicationType as ApplicationType | "";
+  const courses = category && category !== "school" ? coursesFor(level, String(values["educationSector"])) : [];
+  const appType = values["applicationType"] as ApplicationType | "";
 
   return <div id="registration-form" className="scroll-mt-6 rounded-3xl border border-edu-navy/10 bg-edu-paper p-4 shadow-[0_20px_60px_-30px_rgba(11,31,75,0.35)] sm:p-8">
     <ol className="flex gap-1.5" aria-label="Registration progress">
@@ -138,7 +138,7 @@ export function EducationSupportForm({ lang, initialCode }: { lang: EduLang; ini
         {field("studentName", { full: true })}{field("fatherName")}{field("motherName")}{field("dateOfBirth", { type: "date" })}{field("gender", { options: genders })}
         {field("nationality")}{field("email", { type: "email", inputMode: "email" })}{field("mobile", { type: "tel", inputMode: "tel" })}{field("whatsapp", { type: "tel", inputMode: "tel", required: false })}
         {field("permanentAddress", { type: "textarea", full: true })}
-        <label className="flex items-center gap-2 text-sm text-edu-ink sm:col-span-2"><input type="checkbox" className="h-4 w-4 accent-[var(--edu-royal)]" checked={values.currentAddress !== "" && values.currentAddress === values.permanentAddress} onChange={e => set("currentAddress", e.target.checked ? String(values.permanentAddress) : "")} />{t("sameAddress")}</label>
+        <label className="flex items-center gap-2 text-sm text-edu-ink sm:col-span-2"><input type="checkbox" className="h-4 w-4 accent-[var(--edu-royal)]" checked={values["currentAddress"] !== "" && values["currentAddress"] === values["permanentAddress"]} onChange={e => set("currentAddress", e.target.checked ? String(values["permanentAddress"]) : "")} />{t("sameAddress")}</label>
         {field("currentAddress", { type: "textarea", full: true })}{field("state", { options: indianStates })}{field("district")}{field("city")}{field("pinCode", { inputMode: "numeric" })}
       </>}
 
@@ -150,7 +150,7 @@ export function EducationSupportForm({ lang, initialCode }: { lang: EduLang; ini
 
       {current.key === "coordinator" && <>
         {check("withoutCoordinator")}
-        {values.withoutCoordinator !== true && <>
+        {values["withoutCoordinator"] !== true && <>
           {field("coordinatorName")}{field("coordinatorType", { options: coordinatorTypes })}{field("coordinatorMobile", { type: "tel", inputMode: "tel" })}{field("coordinatorWhatsapp", { type: "tel", inputMode: "tel", required: false })}
           {field("coordinatorEmail", { type: "email", required: false })}{field("coordinatorInstitution", { required: false })}{field("coordinatorIdText", { required: false, label: t("coordinatorIdText").replace(/ \((optional|वैकल्पिक)\)/, "") })}{field("coordinatorCode", { required: false, label: t("coordinatorCode").replace(/ \((optional|वैकल्पिक)\)/, "") })}
         </>}
@@ -172,7 +172,7 @@ export function EducationSupportForm({ lang, initialCode }: { lang: EduLang; ini
       {current.key === "declaration" && <>{["confirmAccurate", "agreeTerms", "consentVerification", "authorizeContact", "understandFees"].map(k => check(k))}</>}
 
       {current.key === "review" && <div className="space-y-3 text-sm sm:col-span-2">
-        {[[t("studentCategory"), category ? t(category) : "—"], [category === "school" ? t("currentClass") : t("courseName"), category === "school" ? `Class ${values.currentClass}` : String(values.courseName)], [category === "school" ? t("schoolName") : t("collegeName"), String(category === "school" ? values.schoolName : values.collegeName)], [t("studentName"), String(values.studentName)], [t("mobile"), String(values.mobile)], [t("email"), String(values.email)], [t("coordinatorName"), values.withoutCoordinator ? (lang === "en" ? "Without a coordinator" : "बिना कोऑर्डिनेटर") : String(values.coordinatorName)], [t("applicationType"), appType ? (lang === "en" ? applicationTypes[appType].en : applicationTypes[appType].hi) : "—"]].map(([k, v]) => <div key={k} className="flex flex-wrap justify-between gap-2 border-b border-edu-navy/10 pb-2"><span className="text-edu-ink/60">{k}</span><span className="font-bold text-edu-navy">{v}</span></div>)}
+        {[[t("studentCategory"), category ? t(category) : "—"], [category === "school" ? t("currentClass") : t("courseName"), category === "school" ? `Class ${values["currentClass"]}` : String(values["courseName"])], [category === "school" ? t("schoolName") : t("collegeName"), String(category === "school" ? values["schoolName"] : values["collegeName"])], [t("studentName"), String(values["studentName"])], [t("mobile"), String(values["mobile"])], [t("email"), String(values["email"])], [t("coordinatorName"), values["withoutCoordinator"] ? (lang === "en" ? "Without a coordinator" : "बिना कोऑर्डिनेटर") : String(values["coordinatorName"])], [t("applicationType"), appType ? (lang === "en" ? applicationTypes[appType].en : applicationTypes[appType].hi) : "—"]].map(([k, v]) => <div key={k} className="flex flex-wrap justify-between gap-2 border-b border-edu-navy/10 pb-2"><span className="text-edu-ink/60">{k}</span><span className="font-bold text-edu-navy">{v}</span></div>)}
         {appType && <div className="flex items-center justify-between rounded-xl bg-edu-navy px-4 py-3 text-edu-paper"><span className="font-semibold">{lang === "en" ? "Registration fee to pay" : "देय पंजीकरण शुल्क"}</span><span className="text-2xl font-black">₹{applicationTypes[appType].fee}</span></div>}
         <p className="text-xs text-edu-ink/70">{lang === "en" ? "After you submit, you get your acknowledgement number and a secure Razorpay link to pay the fee." : "जमा करने के बाद आपको पावती संख्या और शुल्क भरने के लिए सुरक्षित Razorpay लिंक मिलेगा।"}</p>
       </div>}
@@ -194,8 +194,8 @@ function RegistrationDone({ lang, result, values, onNew }: { lang: EduLang; resu
   const [reference, setReference] = useState("");
   const [refState, setRefState] = useState<{ status: "idle" | "sending" | "saved"; error?: string }>({ status: "idle" });
   const [pdfUrl, setPdfUrl] = useState("");
-  const category = String(values.studentCategory);
-  const ackData = { ackNumber: result.ackNumber, studentName: String(values.studentName), createdAt: result.createdAt, category: category === "school" ? "School student" : category === "ug" ? "Undergraduate (UG)" : "Postgraduate (PG)", classOrCourse: category === "school" ? `Class ${values.currentClass}` : String(values.courseName), sector: String(values.educationSector), applicationType: result.applicationType, coordinatorName: result.coordinatorName };
+  const category = String(values["studentCategory"]);
+  const ackData = { ackNumber: result.ackNumber, studentName: String(values["studentName"]), createdAt: result.createdAt, category: category === "school" ? "School student" : category === "ug" ? "Undergraduate (UG)" : "Postgraduate (PG)", classOrCourse: category === "school" ? `Class ${values["currentClass"]}` : String(values["courseName"]), sector: String(values["educationSector"]), applicationType: result.applicationType, coordinatorName: result.coordinatorName };
   const payStatus = refState.status === "saved" ? "reference_submitted" as const : "pending" as const;
 
   // Prepare the PDF before the click so phone downloads keep the tap.
