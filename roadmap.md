@@ -164,6 +164,8 @@
 - [ ] Run authenticated readiness check after account email verification and first-admin claim.
 
 ## Employee onboarding and CRM
+- [ ] Optimize website loading without removing content/design; check real visitor performance and reduce unnecessary asset/script loading.
+- [ ] Use a professional CRM layout and persistent drag-and-drop lead status board with phone/keyboard alternatives.
 - [ ] Onboard Support, Sales, BDE and BDM employees with verified accounts, admin-managed access, team assignment and deactivation.
 - [ ] Build a shared CRM workspace for leads/contacts, sales pipeline, follow-ups/tasks, activity history, support tickets, search/filters and reports.
 - [ ] Connect website enquiries and registrations to CRM records without exposing private student bank/KYC details.

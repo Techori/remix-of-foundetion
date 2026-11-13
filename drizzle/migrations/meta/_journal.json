@@ -8,6 +8,27 @@
       "when": 1794557650669,
       "tag": "0000_education_ack_kyc_approval_staff",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794558861967,
+      "tag": "0001_crm_employee_sales_support",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794558961555,
+      "tag": "0002_crm_atomic_actions_lookup",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794559381345,
+      "tag": "0003_crm_write_boundary_guards",
+      "breakpoints": true
     }
   ]
 }
