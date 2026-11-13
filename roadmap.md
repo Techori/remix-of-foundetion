@@ -157,3 +157,4 @@
 - [ ] Send automatic student confirmation and acknowledgement through the user's Zoho mailbox; waiting for sender identity and a secure Zoho connection. Confirm whether SMS is also required.
 - [ ] Require confirmed payment before admin approval; enhance registration review.
 - [ ] Add BDE/BDM accounts and scoped access; waiting for permissions and account/profile details. Provision admin securely without sharing passwords in chat.
+- [ ] Check the current admin account and provide safe login/setup guidance in response to the credentials request.
