@@ -130,18 +130,18 @@
 - [x] Add 'RILOYD Foundation' button to the menu
 
 - [x] Razorpay online payment for Funding Programme fee (₹999 + 18% GST) with admin Payments list; test-mode payment verified end to end
-- [ ] Switch Razorpay to live keys: awaiting Razorpay account activation and live keys
+- [x] Online payment gateway removed everywhere (user request, 13 Nov); Razorpay live keys no longer needed
 - [x] Desktop footer: Contact moved ~1.5cm right, Explore ~1cm wider; checked at 1280/1440/1920
 - [x] Explain Razorpay requirements to user
-- [ ] Zoho Payments option built (hidden until set up); awaiting Zoho keys from user
+- [x] Zoho Payments option removed with the payment gateway
 
 ## Forms, payments, coordinators, Foundation (12 Nov 2026)
 - [ ] Replace Zoho form (funding page + popup) with an on-site form
-- [ ] Paid forms (Funding, Prototype, Young Innovators): fill form → pay → submitted; unpaid = lead
+- [x] Paid forms flow dropped: user removed the payment gateway
 - [ ] Coordinator / referral code field on every form
 - [ ] Admin: coordinators with generated referral codes + share links, referral counts
 - [ ] Admin: programme applications (submitted vs leads)
-- [ ] RILOYD Foundation single-page site at /foundation (own header/footer, Hindi/English)
+- [x] RILOYD Foundation page at /foundation with section menu and Hindi/English switch; desktop/phone checked
 
-- [ ] Build the RILOYD Foundation page on this site (no separate website) and point menu/footer links to it; save Foundation forms to an admin tab
-- [ ] Switch online payments to Zoho Payments only and remove Razorpay from checkout
+- [x] Menu and footer Foundation links point to /foundation; admin "Foundation forms" tab added (signed-in check pending: remix has no account yet)
+- [x] Payments: gateway removed entirely instead

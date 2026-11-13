@@ -637,3 +637,12 @@
 }
 /* Festive covers the regular photos with festival pictures, so skip loading the hidden ones. */
 .chhath .base-art { display: none; }
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* Foundation page: keep its section menu below the festive garland. */
+:root:is(.diwali, .chhath) .foundation-subnav { margin-top: 64px; }
+@media (max-width: 639px) { :root:is(.diwali, .chhath) .foundation-subnav { margin-top: 42px; } }

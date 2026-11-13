@@ -45,4 +45,5 @@
 - Prototype AI payment/permission pauses need an explicit admin reset, never automatic retries.
 
 - Student review sets only approved/rejected via an admin-validated server function and column-scoped RLS; approval never publishes minors or confirms payment.
-- Online programme fees go through validated server functions that create the provider order/session server-side from the shared browser-safe fee module and mark payments paid only after the provider's API confirms amount and status; admin reads are RLS-scoped and provider tokens live in a service-role-only table, so browsers can never set prices or forge a paid record.
+- The site has no online payment gateway: programme fees are shown for information and paid through the verified accounts on `/payment`; never add checkout code without an explicit request, so no form implies a confirmed payment.
+- RILOYD Foundation lives at `/foundation` (no external site); EN/HI copy in `foundation-copy.ts`, rules in `foundation.ts`, forms in the admin Foundation tab, so menu, footer and admin stay in sync.
