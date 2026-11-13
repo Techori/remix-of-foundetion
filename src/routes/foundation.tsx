@@ -64,7 +64,7 @@ function FoundationPage() {
       <div className="mx-auto max-w-[1280px] px-4 pb-14 pt-24 sm:px-6 md:py-28 lg:px-10 lg:py-36">
         <div className="max-w-xl">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <img src={riloydLogo} alt="RILOYD" width={208} height={59} decoding="async" className="h-12 w-auto" />
+            <img src={riloydLogo} alt="RILOYD" width={480} height={240} decoding="async" className="h-16 w-auto sm:h-20" />
             <Button type="button" variant="outline" size="sm" onClick={toggleLang} aria-label={t.langLabel} className="h-8 rounded-full border-foundation-paper/50 bg-transparent px-3 text-xs font-bold text-foundation-paper hover:bg-foundation-paper/10 hover:text-foundation-paper"><Languages className="h-3.5 w-3.5" aria-hidden="true" />{t.langToggle}</Button>
           </div>
           <div className="mt-6"><Kicker light>{t.hero.kicker}</Kicker></div>
