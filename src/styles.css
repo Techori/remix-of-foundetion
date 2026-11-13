@@ -671,5 +671,6 @@
   letter-spacing: 0;
 }
 .crm-workspace section { background-image: none !important; }
+.crm-workspace header { background: var(--background); border-bottom: 1px solid var(--border); }
 .crm-progress { accent-color: var(--crm-success); }
 .crm-workspace input, .crm-workspace select { max-width: 100%; }

@@ -1,6 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 import { DeferredContent } from "@/components/deferred-content";
+import { ResponsiveSiteImage } from '@/components/responsive-site-image';
+import heroMobile from '@/assets/local/riloyd-mountain.png.optimized.mobile.webp';
+import officeMobile from '@/assets/local/riloyd-office.png.optimized.mobile.webp';
+import contactMobile from '@/assets/local/riloyd-contact-office.png.optimized.mobile.webp';
+import diwaliHeroMobile from '@/assets/festive-diwali-hero-light.mobile.webp';
+import chhathHeroMobile from '@/assets/chhath-home-hero.mobile.webp';
+import diwaliOfficeMobile from '@/assets/festive-diwali-office-light.mobile.webp';
+import chhathOfficeMobile from '@/assets/chhath-home-office.mobile.webp';
+import diwaliContactMobile from '@/assets/festive-diwali-contact-light.mobile.webp';
+import chhathContactMobile from '@/assets/chhath-home-contact.mobile.webp';
 import { siteStats } from "@/lib/site-stats";
 import {
   ArrowRight,
@@ -111,12 +121,12 @@ function Index() {
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
       <section id="home" className="hero-shell relative min-h-[560px] border-b border-border sm:min-h-[640px] lg:min-h-[660px]">
-        <img
+        <ResponsiveSiteImage mobile={heroMobile}
           src={heroAsset}
           alt="Two mountaineers helping each other reach a summit"
-          className="absolute inset-0 h-full w-full object-cover object-[63%_38%] lg:object-[75%_38%]" decoding="async" fetchPriority="high" />
-        <img src={diwaliHero} alt="" aria-hidden="true" width={1600} height={864} className="diwali-art absolute inset-0 h-full w-full object-cover object-[70%_40%]" loading="lazy" decoding="async" />
-        <img src={chhathHero} alt="" aria-hidden="true" width={1600} height={853} className="chhath-art absolute inset-0 h-full w-full object-cover object-[70%_40%]" loading="lazy" decoding="async" />
+          className="base-art absolute inset-0 h-full w-full object-cover object-[63%_38%] lg:object-[75%_38%]" decoding="async" fetchPriority="high" />
+        <ResponsiveSiteImage mobile={diwaliHeroMobile} src={diwaliHero} alt="" aria-hidden="true" width={1600} height={864} className="diwali-art absolute inset-0 h-full w-full object-cover object-[70%_40%]" loading="lazy" decoding="async" />
+        <ResponsiveSiteImage mobile={chhathHeroMobile} src={chhathHero} alt="" aria-hidden="true" width={1600} height={853} className="chhath-art absolute inset-0 h-full w-full object-cover object-[70%_40%]" loading="lazy" decoding="async" />
         <div className="diwali-sparkles" aria-hidden="true" />
         <div className="hero-shade absolute inset-0" />
 
@@ -173,9 +183,9 @@ function Index() {
       <section id="about" className="border-b border-border bg-background">
         <div className="mx-auto grid max-w-[1380px] lg:grid-cols-[2.15fr_1fr]">
           <div className="why-panel relative min-h-[350px] overflow-hidden px-5 py-10 sm:px-6 lg:min-h-[380px] lg:px-12 lg:py-11">
-            <img src={officeAsset} alt="Riloyd corporate office at sunset" className="base-art absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
-            <img src={diwaliOffice} alt="" aria-hidden="true" width={1536} height={768} className="diwali-art absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
-            <img src={chhathOffice} alt="" aria-hidden="true" width={1536} height={768} className="chhath-art absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+            <ResponsiveSiteImage mobile={officeMobile} src={officeAsset} alt="Riloyd corporate office at sunset" className="base-art absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+            <ResponsiveSiteImage mobile={diwaliOfficeMobile} src={diwaliOffice} alt="" aria-hidden="true" width={1536} height={768} className="diwali-art absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+            <ResponsiveSiteImage mobile={chhathOfficeMobile} src={chhathOffice} alt="" aria-hidden="true" width={1536} height={768} className="chhath-art absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
             <div className="why-shade absolute inset-0" />
             <div className="relative z-10 max-w-xl">
               <p className="eyebrow text-[10px] font-bold uppercase">Why Riloyd</p>
@@ -198,9 +208,9 @@ function Index() {
       <DeferredContent className="min-h-[540px]" fallback={<section className="min-h-[540px] border-b border-border bg-background" aria-busy="true" />}><Suspense fallback={<section className="min-h-[540px] border-b border-border bg-background" aria-busy="true" />}><ServiceAdvisor /></Suspense></DeferredContent>
 
       <section id="contact" className="contact-band relative min-h-[8cm] overflow-hidden border-b border-border sm:h-[8cm]">
-        <img src={contactOfficeAsset} alt="Riloyd reception office overlooking a city at sunset" className="base-art contact-background absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
-        <img src={diwaliContact} alt="" aria-hidden="true" width={1920} height={640} className="diwali-art absolute inset-0 h-full w-full object-cover object-right" loading="lazy" decoding="async" />
-        <img src={chhathContact} alt="" aria-hidden="true" width={1920} height={640} className="chhath-art absolute inset-0 h-full w-full object-cover object-right" loading="lazy" decoding="async" />
+        <ResponsiveSiteImage mobile={contactMobile} src={contactOfficeAsset} alt="Riloyd reception office overlooking a city at sunset" className="base-art contact-background absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+        <ResponsiveSiteImage mobile={diwaliContactMobile} src={diwaliContact} alt="" aria-hidden="true" width={1920} height={640} className="diwali-art absolute inset-0 h-full w-full object-cover object-right" loading="lazy" decoding="async" />
+        <ResponsiveSiteImage mobile={chhathContactMobile} src={chhathContact} alt="" aria-hidden="true" width={1920} height={640} className="chhath-art absolute inset-0 h-full w-full object-cover object-right" loading="lazy" decoding="async" />
         <div className="contact-shade absolute inset-0" />
         <div className="relative mx-auto flex h-full max-w-[1380px] flex-col justify-center px-5 py-6 sm:px-6 lg:px-12">
           <div className="max-w-4xl">
