@@ -38,7 +38,7 @@ const pin = z.string().trim().regex(/^[1-9]\d{5}$/, "Enter a valid 6-digit PIN c
 const oneOf = <T extends readonly [string, ...string[]]>(values: T, msg: string) => z.string().refine((v): v is T[number] => (values as readonly string[]).includes(v), msg);
 const tick = (msg: string) => z.literal(true, { errorMap: () => ({ message: msg }) });
 
-export const educationSupportSchema = z.object({
+export const educationSupportBase = z.object({
   studentCategory: z.enum(studentCategories, { errorMap: () => ({ message: "Select a student category." }) }),
   // School
   currentClass: text(4), schoolName: text(160), schoolType: text(40), schoolBoard: text(40), schoolAddress: text(300), schoolCity: text(80), schoolState: text(80), schoolPin: text(6),
@@ -67,8 +67,17 @@ export const educationSupportSchema = z.object({
   consentVerification: tick("Please consent to document verification."),
   authorizeContact: tick("Please allow us to contact you."),
   understandFees: tick("Please confirm you understand the fee is separate from selection."),
-}).superRefine((v, ctx) => {
-  const need = (path: string, ok: boolean, message: string) => { if (!ok) ctx.addIssue({ code: "custom", path: [path], message }); };
+});
+
+type BaseValues = z.infer<typeof educationSupportBase>;
+
+/** Category, age and coordinator rules; works on partial drafts so each step can be checked on its own. */
+export function conditionalIssues(raw: Partial<Record<keyof BaseValues, unknown>>): { path: string; message: string }[] {
+  const str = (k: keyof BaseValues) => (typeof raw[k] === "string" ? (raw[k] as string).trim() : "");
+  const v = new Proxy({} as BaseValues, { get: (_t, k: string) => (typeof raw[k as keyof BaseValues] === "boolean" ? raw[k as keyof BaseValues] : str(k as keyof BaseValues)) });
+
+  const issues: { path: string; message: string }[] = [];
+  const need = (path: string, ok: boolean, message: string) => { if (!ok) issues.push({ path, message }); };
   if (v.studentCategory === "school") {
     need("currentClass", (schoolClasses as readonly string[]).includes(v.currentClass), "Select the current class (4–12).");
     need("schoolName", v.schoolName.length >= 2, "Enter the school name.");
@@ -104,7 +113,24 @@ export const educationSupportSchema = z.object({
     need("coordinatorMobile", v.coordinatorMobile.length > 0, "Enter the coordinator's mobile number.");
     need("coordinatorType", (coordinatorTypes as readonly string[]).includes(v.coordinatorType), "Select the coordinator type.");
   }
+
+  return issues;
+}
+
+export const educationSupportSchema = educationSupportBase.superRefine((v, ctx) => {
+  for (const i of conditionalIssues(v)) ctx.addIssue({ code: "custom", path: [i.path], message: i.message });
 });
+
+/** First error message per field for the given step's fields. */
+export function stepErrors(values: Record<string, unknown>, fields: string[]): Record<string, string> {
+  const errors: Record<string, string> = {};
+  const parsed = educationSupportBase.safeParse(values);
+  const all = [...(parsed.success ? [] : parsed.error.issues.map(i => ({ path: String(i.path[0]), message: i.message }))), ...conditionalIssues(values as Partial<Record<keyof BaseValues, unknown>>)];
+  for (const i of all) if (fields.includes(i.path) && !errors[i.path]) errors[i.path] = i.message;
+  // Optional school/college fields are only checked by the conditional rules.
+  return errors;
+}
+
 export type EducationSupportInput = z.input<typeof educationSupportSchema>;
 
 export const paymentReferenceSchema = z.object({
