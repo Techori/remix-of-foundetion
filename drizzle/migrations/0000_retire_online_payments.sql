@@ -1,2 +1,0 @@
-COMMENT ON TABLE public.programme_payments IS 'DEPRECATED: online payment gateway removed from the site; fees are paid via the verified accounts page. Kept for historical records.';
-COMMENT ON TABLE public.payment_provider_tokens IS 'DEPRECATED: online payment gateway removed from the site; no provider tokens are used.';
