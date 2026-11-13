@@ -145,6 +145,312 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_activities: {
+        Row: {
+          actor_id: string
+          body: string
+          created_at: string
+          id: string
+          kind: string
+          lead_id: string | null
+          owner_id: string
+          ticket_id: string | null
+        }
+        Insert: {
+          actor_id?: string
+          body: string
+          created_at?: string
+          id?: string
+          kind?: string
+          lead_id?: string | null
+          owner_id: string
+          ticket_id?: string | null
+        }
+        Update: {
+          actor_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          lead_id?: string | null
+          owner_id?: string
+          ticket_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "crm_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "crm_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_customers: {
+        Row: {
+          acknowledgement: string | null
+          company: string
+          created_at: string
+          customer_code: string
+          email: string
+          full_name: string
+          id: string
+          owner_id: string
+          phone: string
+        }
+        Insert: {
+          acknowledgement?: string | null
+          company?: string
+          created_at?: string
+          customer_code?: string
+          email?: string
+          full_name: string
+          id?: string
+          owner_id: string
+          phone?: string
+        }
+        Update: {
+          acknowledgement?: string | null
+          company?: string
+          created_at?: string
+          customer_code?: string
+          email?: string
+          full_name?: string
+          id?: string
+          owner_id?: string
+          phone?: string
+        }
+        Relationships: []
+      }
+      crm_employee_profiles: {
+        Row: {
+          designation: string
+          employee_code: string
+          full_name: string
+          joining_date: string
+          phone: string
+          photo_url: string | null
+          user_id: string
+        }
+        Insert: {
+          designation?: string
+          employee_code: string
+          full_name: string
+          joining_date?: string
+          phone?: string
+          photo_url?: string | null
+          user_id: string
+        }
+        Update: {
+          designation?: string
+          employee_code?: string
+          full_name?: string
+          joining_date?: string
+          phone?: string
+          photo_url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      crm_leads: {
+        Row: {
+          amount: number
+          created_at: string
+          customer_id: string
+          id: string
+          next_follow_up: string | null
+          notes: string
+          owner_id: string
+          source: string
+          source_id: string | null
+          stage: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          customer_id: string
+          id?: string
+          next_follow_up?: string | null
+          notes?: string
+          owner_id: string
+          source?: string
+          source_id?: string | null
+          stage?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          customer_id?: string
+          id?: string
+          next_follow_up?: string | null
+          notes?: string
+          owner_id?: string
+          source?: string
+          source_id?: string | null
+          stage?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_leads_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "crm_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_memberships: {
+        Row: {
+          active: boolean
+          created_at: string
+          manager_id: string | null
+          role: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          manager_id?: string | null
+          role: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          manager_id?: string | null
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      crm_targets: {
+        Row: {
+          calls_target: number
+          id: string
+          month: string
+          owner_id: string
+          revenue_target: number
+          wins_target: number
+        }
+        Insert: {
+          calls_target?: number
+          id?: string
+          month: string
+          owner_id: string
+          revenue_target?: number
+          wins_target?: number
+        }
+        Update: {
+          calls_target?: number
+          id?: string
+          month?: string
+          owner_id?: string
+          revenue_target?: number
+          wins_target?: number
+        }
+        Relationships: []
+      }
+      crm_tasks: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          due_date: string
+          id: string
+          owner_id: string
+          priority: string
+          status: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          due_date: string
+          id?: string
+          owner_id: string
+          priority?: string
+          status?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          due_date?: string
+          id?: string
+          owner_id?: string
+          priority?: string
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_tasks_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "crm_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_tickets: {
+        Row: {
+          created_at: string
+          customer_id: string
+          description: string
+          id: string
+          owner_id: string
+          priority: string
+          status: string
+          subject: string
+          ticket_code: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          description?: string
+          id?: string
+          owner_id: string
+          priority?: string
+          status?: string
+          subject: string
+          ticket_code?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          description?: string
+          id?: string
+          owner_id?: string
+          priority?: string
+          status?: string
+          subject?: string
+          ticket_code?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_tickets_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "crm_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_reports: {
         Row: {
           active: boolean
@@ -981,6 +1287,8 @@ export type Database = {
           submitted: number
         }[]
       }
+      crm_can_access: { Args: { _owner: string }; Returns: boolean }
+      crm_role: { Args: never; Returns: string }
       first_admin_setup_status: { Args: never; Returns: string }
       has_role: {
         Args: {
