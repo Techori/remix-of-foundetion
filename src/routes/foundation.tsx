@@ -39,7 +39,7 @@ const stepIcons = [FileText, Search, ClipboardCheck, Gavel];
 const involvedIcons = { volunteer: Users, partner: Handshake, donation_pledge: HandHeart };
 
 function Kicker({ children, light }: { children: React.ReactNode; light?: boolean }) {
-  return <p className={`text-xs font-extrabold uppercase tracking-[0.22em] ${light ? "text-foundation-gold" : "text-foundation-maroon"}`}>{children}</p>;
+  return <p className={`text-xs font-extrabold uppercase tracking-[0.22em] [&:lang(hi)]:tracking-normal ${light ? "text-foundation-gold" : "text-foundation-maroon"}`}>{children}</p>;
 }
 
 function FoundationPage() {
