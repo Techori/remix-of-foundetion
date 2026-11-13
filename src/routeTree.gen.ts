@@ -21,6 +21,7 @@ import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as PrototypeFundingRouteImport } from './routes/prototype-funding'
 import { Route as ResearchRouteImport } from './routes/research'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as StaffRouteImport } from './routes/staff'
 import { Route as YoungInnovators2026RouteImport } from './routes/young-innovators-2026'
 import { Route as BusinessesIndexRouteImport } from './routes/businesses.index'
 import { Route as BusinessesSlugRouteImport } from './routes/businesses.$slug'
@@ -103,6 +104,11 @@ const ResearchRoute = ResearchRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
   getParentRoute: () => rootRouteImport,
 } as any)
 const YoungInnovators2026Route = YoungInnovators2026RouteImport.update({
@@ -237,6 +243,7 @@ export interface FileRoutesByFullPath {
   '/prototype-funding': typeof PrototypeFundingRoute
   '/research': typeof ResearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/staff': typeof StaffRoute
   '/young-innovators-2026': typeof YoungInnovators2026Route
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/global-presence/$slug': typeof GlobalPresenceSlugRoute
@@ -274,6 +281,7 @@ export interface FileRoutesByTo {
   '/prototype-funding': typeof PrototypeFundingRoute
   '/research': typeof ResearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/staff': typeof StaffRoute
   '/young-innovators-2026': typeof YoungInnovators2026Route
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/global-presence/$slug': typeof GlobalPresenceSlugRoute
@@ -312,6 +320,7 @@ export interface FileRoutesById {
   '/prototype-funding': typeof PrototypeFundingRoute
   '/research': typeof ResearchRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/staff': typeof StaffRoute
   '/young-innovators-2026': typeof YoungInnovators2026Route
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/global-presence/$slug': typeof GlobalPresenceSlugRoute
@@ -351,6 +360,7 @@ export interface FileRouteTypes {
     | '/prototype-funding'
     | '/research'
     | '/sitemap.xml'
+    | '/staff'
     | '/young-innovators-2026'
     | '/businesses/$slug'
     | '/global-presence/$slug'
@@ -388,6 +398,7 @@ export interface FileRouteTypes {
     | '/prototype-funding'
     | '/research'
     | '/sitemap.xml'
+    | '/staff'
     | '/young-innovators-2026'
     | '/businesses/$slug'
     | '/global-presence/$slug'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/prototype-funding'
     | '/research'
     | '/sitemap.xml'
+    | '/staff'
     | '/young-innovators-2026'
     | '/businesses/$slug'
     | '/global-presence/$slug'
@@ -463,6 +475,7 @@ export interface RootRouteChildren {
   PrototypeFundingRoute: typeof PrototypeFundingRoute
   ResearchRoute: typeof ResearchRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StaffRoute: typeof StaffRoute
   YoungInnovators2026Route: typeof YoungInnovators2026Route
   BusinessesSlugRoute: typeof BusinessesSlugRoute
   GlobalPresenceSlugRoute: typeof GlobalPresenceSlugRoute
@@ -572,6 +585,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/young-innovators-2026': {
@@ -751,6 +771,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrototypeFundingRoute: PrototypeFundingRoute,
   ResearchRoute: ResearchRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StaffRoute: StaffRoute,
   YoungInnovators2026Route: YoungInnovators2026Route,
   BusinessesSlugRoute: BusinessesSlugRoute,
   GlobalPresenceSlugRoute: GlobalPresenceSlugRoute,
