@@ -151,10 +151,12 @@
 - [x] Education Support page with multi-step scholarship/sponsorship form, Razorpay payment links (₹149/₹249/₹599), acknowledgement number on submit, admin tab
 - [x] Remove Foundation section from footer
 - [x] Menu Foundation button links to the Education Support page
-- [ ] Education Support: collect bank and KYC text details in the form, without document/image uploads; confirm required identity fields.
-- [ ] Change new acknowledgement numbers to six date digits + two state digits + two district digits + five student sequence digits (00001–99999); confirm code mapping and sequence scope.
-- [ ] Add acknowledgement PDF QR code and complete Excel export.
+- [x] Education Support: bank and full Aadhaar text fields, encrypted and excluded from drafts; sample submission verified.
+- [x] New acknowledgement numbers: YYMMDD + list-position state code + permanent district code + global 00001–99999 sequence; sample 261113130100001 verified.
+- [x] Add acknowledgement PDF QR code and all-page Excel preparation/download controls; authenticated export verification awaits admin account.
 - [ ] Send automatic student confirmation and acknowledgement through the user's Zoho mailbox; waiting for sender identity and a secure Zoho connection. Confirm whether SMS is also required.
-- [ ] Require confirmed payment before admin approval; enhance registration review.
+- [x] Require confirmed payment before admin approval through database enforcement; add admin review and private-detail controls.
 - [ ] Add BDE/BDM accounts and scoped access; waiting for permissions and account/profile details. Provision admin securely without sharing passwords in chat.
-- [ ] Check the current admin account and provide safe login/setup guidance in response to the credentials request.
+- [x] Check current admin account: remix has no accounts; safe setup guidance provided.
+- [ ] Create the explicitly requested admin signup; preserve email verification and first-admin claim checks.
+- [ ] Verify schema readiness through read-only diagnostics without restoring copied migrations.
