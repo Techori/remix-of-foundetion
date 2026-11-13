@@ -70,6 +70,11 @@
   --color-foundation-paper: var(--foundation-paper);
   --color-foundation-sage: var(--foundation-sage);
   --color-foundation-ink: var(--foundation-ink);
+  --color-edu-navy: var(--edu-navy);
+  --color-edu-royal: var(--edu-royal);
+  --color-edu-sky: var(--edu-sky);
+  --color-edu-paper: var(--edu-paper);
+  --color-edu-ink: var(--edu-ink);
 }
 
 :root {
@@ -81,6 +86,12 @@
   --foundation-paper: #f8f8f5;
   --foundation-sage: #e8f0ea;
   --foundation-ink: #17221d;
+  /* Education Support registration palette (navy / royal blue): fixed across site themes. */
+  --edu-navy: #0b1f4b;
+  --edu-royal: #1d4ed8;
+  --edu-sky: #eaf0ff;
+  --edu-paper: #ffffff;
+  --edu-ink: #0f172a;
   --background: oklch(0.055 0 0);
   --footer: oklch(0 0 0);
   --foreground: oklch(0.985 0 0);
